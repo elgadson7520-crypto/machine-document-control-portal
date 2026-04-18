@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Machine Document Control Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 /* =========================================================
    DESIGN TOKENS
@@ -544,6 +545,119 @@ a{color:inherit;text-decoration:none;}
   min-height:600px;max-height:900px;
   display:flex;flex-direction:column;align-items:center;gap:18px;
 }
+/* PDF.js rendered pages */
+.pdfjs-page{
+  position:relative;background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,0.4);
+}
+.pdfjs-page canvas{display:block;}
+.pdfjs-page .textLayer{
+  position:absolute;left:0;top:0;right:0;bottom:0;
+  overflow:hidden;opacity:0.25;line-height:1;
+  user-select:text;
+}
+.pdfjs-page .textLayer > span{
+  color:transparent;position:absolute;
+  white-space:pre;cursor:text;transform-origin:0% 0%;
+}
+.pdfjs-page .textLayer ::selection{background:rgba(37,99,235,0.4);color:transparent;}
+.pdfjs-page .textLayer .highlight{
+  background:rgba(245,158,11,0.5);
+  border-radius:2px;
+}
+.pdfjs-loading{
+  color:#9ca3af;text-align:center;padding:80px 20px;font-family:var(--font);font-size:13px;
+}
+.pdfjs-error{
+  color:#fca5a5;text-align:center;padding:60px 20px;font-family:var(--font);font-size:13px;
+}
+
+/* Search modal */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(11,31,59,0.55);
+  z-index:200;display:none;align-items:flex-start;justify-content:center;
+  padding-top:80px;backdrop-filter:blur(4px);
+}
+.modal-backdrop.open{display:flex;}
+.search-modal{
+  background:#fff;border-radius:var(--radius-lg);
+  width:680px;max-width:92vw;max-height:70vh;
+  box-shadow:0 25px 60px rgba(0,0,0,0.3);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.search-modal-head{
+  padding:14px 20px;border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;gap:12px;
+}
+.search-modal-head input{
+  flex:1;border:none;outline:none;font-size:16px;
+  background:transparent;color:var(--gray-900);
+}
+.search-modal-head .esc{
+  padding:2px 8px;font-size:11px;color:var(--gray-500);
+  border:1px solid var(--gray-200);border-radius:4px;font-family:monospace;
+}
+.search-results{flex:1;overflow:auto;padding:6px 0;}
+.search-hit{
+  padding:10px 20px;cursor:pointer;display:flex;align-items:center;gap:12px;
+  border-left:3px solid transparent;transition:background .12s;
+}
+.search-hit:hover{background:var(--blue-50);border-left-color:var(--blue-500);}
+.search-hit .ico{
+  width:32px;height:32px;border-radius:7px;background:var(--blue-50);color:var(--blue-500);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.search-hit .t{font-weight:600;font-size:13px;color:var(--gray-900);margin-bottom:2px;}
+.search-hit .s{font-size:11.5px;color:var(--gray-500);}
+.search-hit .snippet{font-size:11.5px;color:var(--gray-600);margin-top:4px;background:var(--gray-50);padding:4px 8px;border-radius:4px;}
+.search-hit mark{background:#fde68a;color:inherit;padding:0 2px;border-radius:2px;}
+.search-modal-foot{
+  padding:8px 20px;border-top:1px solid var(--gray-100);
+  font-size:11.5px;color:var(--gray-500);background:var(--gray-50);
+  display:flex;justify-content:space-between;
+}
+
+/* Review-due alerts */
+.review-due-card{
+  padding:12px 16px;
+  border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;gap:12px;
+  border-left:3px solid transparent;cursor:pointer;transition:background .15s;
+}
+.review-due-card:hover{background:var(--gray-50);}
+.review-due-card.overdue{border-left-color:var(--red-600);background:linear-gradient(90deg,#fef2f2 0%,transparent 40%);}
+.review-due-card.due-soon{border-left-color:var(--amber-600);background:linear-gradient(90deg,#fffbeb 0%,transparent 40%);}
+.review-due-date{
+  font-size:11px;font-weight:700;padding:4px 8px;border-radius:4px;text-align:center;min-width:60px;
+}
+.review-due-date.overdue{background:var(--red-50);color:var(--red-600);}
+.review-due-date.due-soon{background:var(--amber-50);color:var(--amber-600);}
+.review-due-date.ok{background:var(--green-50);color:var(--green-600);}
+
+/* Analytics charts (inline SVG) */
+.chart-card{
+  background:#fff;border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);padding:20px;
+}
+.chart-card h3{font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:4px;}
+.chart-card .sub{font-size:12px;color:var(--gray-500);margin-bottom:16px;}
+.chart-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.chart-row .lbl{width:110px;font-size:12px;color:var(--gray-700);font-weight:500;flex-shrink:0;}
+.chart-row .track{flex:1;height:22px;background:var(--gray-100);border-radius:6px;overflow:hidden;position:relative;}
+.chart-row .bar{height:100%;background:linear-gradient(90deg,var(--blue-500),#3b82f6);border-radius:6px;display:flex;align-items:center;padding:0 8px;color:#fff;font-size:11px;font-weight:600;}
+.chart-row .bar.green{background:linear-gradient(90deg,#16a34a,#22c55e);}
+.chart-row .bar.amber{background:linear-gradient(90deg,#d97706,#f59e0b);}
+.chart-row .bar.red{background:linear-gradient(90deg,#dc2626,#ef4444);}
+.chart-row .val{width:48px;text-align:right;font-size:12px;font-weight:600;color:var(--gray-700);}
+
+.donut-wrap{display:flex;align-items:center;gap:24px;}
+.donut-legend{display:flex;flex-direction:column;gap:8px;font-size:12px;}
+.donut-legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:middle;}
+
+.sparkline{width:100%;height:80px;}
+.sparkline path{fill:none;stroke:var(--blue-500);stroke-width:2;}
+.sparkline .area{fill:rgba(37,99,235,0.12);stroke:none;}
+.sparkline .dot{fill:var(--blue-500);}
 .pdf-page{
   background:#fff;color:#111827;
   width:640px;min-height:820px;
@@ -816,6 +930,22 @@ a{color:inherit;text-decoration:none;}
   </div>
 </section>
 
+<!-- Search modal -->
+<div class="modal-backdrop" id="searchModal" onclick="if(event.target===this)closeSearch()">
+  <div class="search-modal">
+    <div class="search-modal-head">
+      <span style="color:var(--gray-400);">&#128269;</span>
+      <input id="searchInput" placeholder="Search documents, titles, content, machines, owners..." oninput="runSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()" />
+      <span class="esc">ESC</span>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+    <div class="search-modal-foot">
+      <span><strong id="searchCount">0</strong> results</span>
+      <span>Full-text search across titles, IDs, owners and document body</span>
+    </div>
+  </div>
+</div>
+
 <!-- =========================================================
      APP SHELL
 ========================================================= -->
@@ -832,7 +962,7 @@ a{color:inherit;text-decoration:none;}
     </div>
     <nav class="topnav-links" id="navLinks"></nav>
     <div class="topnav-right">
-      <button class="topnav-icon" title="Search">&#128269;</button>
+      <button class="topnav-icon" title="Search" onclick="openSearch()">&#128269;</button>
       <div class="lang-toggle">
         <button id="langEn" class="active" onclick="setLang('en')">EN</button>
         <button id="langEs" onclick="setLang('es')">ES</button>
@@ -866,6 +996,7 @@ a{color:inherit;text-decoration:none;}
     <div id="libraryView" class="view"></div>
     <div id="trainingView" class="view"></div>
     <div id="auditView" class="view"></div>
+    <div id="analyticsView" class="view"></div>
     <div id="adminView" class="view"></div>
   </main>
 </div>
@@ -889,7 +1020,13 @@ const I18N = {
     appTitle:"Machine Document Control Portal", appTag:"SouthWest Region Operations",
     switchUser:"Switch demo user", signOut:"Sign out", endSession:"End secure session",
     nav_home:"Home", nav_plant:"My Plant", nav_docs:"Documents", nav_training:"Training",
-    nav_audit:"Audit Trail", nav_help:"Help", nav_admin:"Admin",
+    nav_audit:"Audit Trail", nav_analytics:"Analytics", nav_help:"Help", nav_admin:"Admin",
+    reviewDue:"Review Due", reviewOverdue:"Overdue for review", reviewDueSoon:"Due for review soon",
+    analytics:"Analytics & Insights", analyticsSub:"Document control performance across the region",
+    ackRate:"Acknowledgment Rate by Plant", topDocs:"Most Viewed Documents",
+    statusMix:"Document Status Mix", activityTrend:"Activity Trend (7 days)",
+    trainingCompletion:"Training Completion by Plant", overdueReviews:"Overdue Reviews",
+    search_title:"Search", noResults:"No results",
     welcome:"Welcome back", welcomeSub:"Your controlled documents, training and activity for",
     kpi_machines:"My Machines", kpi_sop:"SOPs & Safety", kpi_recent:"Recent Updates", kpi_docs:"Documents",
     latestDocs:"Latest Documents", favMachines:"Favorite Machines", recentViewed:"Recently Viewed",
@@ -935,7 +1072,13 @@ const I18N = {
     appTitle:"Portal de Control de Documentos", appTag:"Operaciones Región SouthWest",
     switchUser:"Cambiar usuario demo", signOut:"Cerrar sesión", endSession:"Finalizar sesión segura",
     nav_home:"Inicio", nav_plant:"Mi Planta", nav_docs:"Documentos", nav_training:"Capacitación",
-    nav_audit:"Auditoría", nav_help:"Ayuda", nav_admin:"Administración",
+    nav_audit:"Auditoría", nav_analytics:"Análisis", nav_help:"Ayuda", nav_admin:"Administración",
+    reviewDue:"Revisión Pendiente", reviewOverdue:"Revisión vencida", reviewDueSoon:"Revisión próxima",
+    analytics:"Análisis e Indicadores", analyticsSub:"Rendimiento del control de documentos en la región",
+    ackRate:"Tasa de Reconocimiento por Planta", topDocs:"Documentos Más Vistos",
+    statusMix:"Distribución de Estado", activityTrend:"Tendencia de Actividad (7 días)",
+    trainingCompletion:"Capacitación por Planta", overdueReviews:"Revisiones Vencidas",
+    search_title:"Buscar", noResults:"Sin resultados",
     welcome:"Bienvenido de nuevo", welcomeSub:"Sus documentos, capacitación y actividad para",
     kpi_machines:"Mis Máquinas", kpi_sop:"SOPs y Seguridad", kpi_recent:"Actualizaciones", kpi_docs:"Documentos",
     latestDocs:"Documentos Recientes", favMachines:"Máquinas Favoritas", recentViewed:"Vistos Recientemente",
@@ -1019,14 +1162,38 @@ const machines = [
 // documents table + embedded revisions
 const docCategories = ["SOP","Safety","PM","Training","Troubleshooting","Quality"];
 let docSeq = 1000;
-function D(plantId,machineId,title,cat,rev,status,lang,owner,approver,readReq,trainReq,revState="Current"){
+// Sample PDF served with CORS headers (Mozilla's PDF.js demo)
+const SAMPLE_PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
+
+// Build a keyword body for full-text search
+function makeBody(title, cat, machineId){
+  const bodies = {
+    "SOP":`Standard operating procedure for ${title}. Startup sequence, recipe loading, first-piece inspection, process variables, torque settings, feeler gauge, lubricant, shift log, quality plan, end-of-run checklist, shutdown procedure, deviation control, recipe verification, HMI interlocks, PPE requirements, guards, supervisor notification.`,
+    "Safety":`Safety procedure for ${title}. Lockout tagout LOTO energy isolation, PPE personal protective equipment, hearing protection, safety glasses Z87.1, emergency stop verification, guarding, arc flash, pinch points, hot work permit, confined space, fall protection, hazard communication, MSDS SDS material safety data sheet, evacuation route.`,
+    "PM":`Preventive maintenance schedule for ${title}. Lubrication intervals, belt inspection, bearing replacement, sensor calibration, pneumatic pressure check, filter replacement, alignment, coupling, motor current draw, vibration analysis, oil change, grease fitting, gearbox inspection, wear limits, CMMS work order.`,
+    "Training":`Operator training standard work for ${title}. Qualification path, competency checklist, shadow observations, sign-off, refresher training, cross-training matrix, skills assessment, acknowledgment, certification renewal, corrective feedback, training records retention.`,
+    "Troubleshooting":`Troubleshooting guide for ${title}. Fault codes, error recovery, escalation path operator lead supervisor maintenance, symptom cause remedy, sensor fault, PLC diagnostic, HMI alarm history, motor overload, drive fault, web break, misfeed, jam clearing, root cause analysis.`,
+    "Quality":`Quality inspection and calibration for ${title}. First article inspection, SPC statistical process control, control chart, Cp Cpk capability, attribute gauge, variable gauge, calibration certificate, traceability, non-conformance NC, CAPA corrective preventive action, inspection frequency, AQL sampling.`
+  };
+  return bodies[cat] || "";
+}
+
+function D(plantId,machineId,title,cat,rev,status,lang,owner,approver,readReq,trainReq,revState="Current",reviewOffsetMonths=null){
+  // reviewDue: default 12 months from effective, but allow override for overdue demos
+  const months = reviewOffsetMonths!==null ? reviewOffsetMonths : 12;
+  const eff = new Date(2026,Math.floor(Math.random()*4),15);
+  const review = new Date(eff); review.setMonth(review.getMonth()+months);
   return {
     id:"DOC-"+(++docSeq),
     plant:plantId, machine:machineId,
     title, category:cat,
     revision:rev, revState, status, language:lang,
-    effective:"2026-0"+(Math.floor(Math.random()*9)+1)+"-15",
+    effective: eff.toISOString().slice(0,10),
+    reviewDue: review.toISOString().slice(0,10),
     owner, approver, readRequired:readReq, trainingRequired:trainReq,
+    pdfUrl: SAMPLE_PDF_URL,
+    body: makeBody(title,cat,machineId),
+    views: Math.floor(Math.random()*180)+5,
     revisions:[
       { rev, status, date:"2026-02-15", author:owner, state:"Current" },
       { rev:"Rev "+(parseInt(rev.split(" ")[1])-1||1), status:"Approved", date:"2025-09-01", author:owner, state:"Superseded" },
@@ -1036,14 +1203,14 @@ function D(plantId,machineId,title,cat,rev,status,lang,owner,approver,readReq,tr
 }
 
 const documents = [
-  // OKC
-  D("okc","m1","Extruder Setup Procedure","SOP","Rev 3","Approved","English","J. Martinez","K. Torres",true,true),
+  // OKC - one overdue, one due soon for demo
+  D("okc","m1","Extruder Setup Procedure","SOP","Rev 3","Approved","English","J. Martinez","K. Torres",true,true,"Current",-2),
   D("okc","m1","LOTO Instructions","Safety","Rev 2","Approved","Bilingual","EHS Team","K. Torres",true,true),
-  D("okc","m1","Weekly PM Checklist","PM","Rev 4","Approved","English","Maintenance","J. Martinez",false,false),
+  D("okc","m1","Weekly PM Checklist","PM","Rev 4","Approved","English","Maintenance","J. Martinez",false,false,"Current",0),
   D("okc","m2","Mixer Startup Procedure","SOP","Rev 2","Approved","Spanish","J. Martinez","K. Torres",true,true),
   D("okc","m2","Calibration Guide","Quality","Rev 1","Draft","English","QA","K. Torres",false,false,"Draft"),
   D("okc","m3","Operator Standard Work","Training","Rev 3","Approved","Bilingual","Training","J. Martinez",true,true),
-  D("okc","m3","Emergency Stop Procedure","Safety","Rev 2","Approved","Bilingual","EHS Team","K. Torres",true,true),
+  D("okc","m3","Emergency Stop Procedure","Safety","Rev 2","Approved","Bilingual","EHS Team","K. Torres",true,true,"Current",-4),
   D("okc","m1","Preventive Maintenance Inspection","PM","Rev 5","Approved","English","Maintenance","J. Martinez",false,false),
   D("okc","m2","Troubleshooting Guide","Troubleshooting","Rev 1","Approved","English","Maintenance","J. Martinez",false,false),
   D("okc","m3","Quality Inspection Checklist","Quality","Rev 2","Approved","Bilingual","QA","K. Torres",true,false),
@@ -1232,6 +1399,7 @@ function buildNav(){
     { id:"library",  i18n:"nav_docs",     show:true },
     { id:"training", i18n:"nav_training", show:true },
     { id:"audit",    i18n:"nav_audit",    show:true },
+    { id:"analytics",i18n:"nav_analytics",show:canAdmin()||currentUser.role==="regional" },
     { id:"admin",    i18n:"nav_admin",    show:canAdmin() }
   ];
   const nav = $("#navLinks"); nav.innerHTML="";
@@ -1258,7 +1426,87 @@ function show(view, ctx){
   if(view==="library") renderLibrary();
   if(view==="training") renderTraining();
   if(view==="audit") renderAudit();
+  if(view==="analytics") renderAnalytics();
   if(view==="admin") renderAdmin();
+}
+
+/* =========================================================
+   GLOBAL SEARCH (full-text)
+========================================================= */
+function openSearch(){
+  $("#searchModal").classList.add("open");
+  setTimeout(()=>{ const i=$("#searchInput"); if(i){ i.value=""; i.focus(); runSearch(""); } }, 30);
+}
+function closeSearch(){ $("#searchModal").classList.remove("open"); }
+document.addEventListener("keydown",(e)=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="k"){ e.preventDefault(); openSearch(); }
+  if(e.key==="Escape"){ closeSearch(); }
+});
+function highlight(text,q){
+  if(!q) return text;
+  const re = new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");
+  return text.replace(re,"<mark>$1</mark>");
+}
+function runSearch(q){
+  const results = $("#searchResults"); const cnt = $("#searchCount");
+  const docs = visibleDocs();
+  if(!q){
+    const recent = (userState[currentUser.id].recent||[]).slice(0,6).map(r=>documents.find(d=>d.id===r.id)).filter(Boolean);
+    results.innerHTML = recent.length
+      ? `<div style="padding:10px 20px;font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Recent</div>`
+        + recent.map(d=>searchHitHtml(d,"")).join("")
+      : `<div class="empty" style="padding:40px 20px;"><div class="ico">&#128269;</div>Type to search documents</div>`;
+    cnt.textContent = "0";
+    return;
+  }
+  const ql = q.toLowerCase();
+  const hits = docs.map(d=>{
+    const hay = (d.title+" "+d.id+" "+d.owner+" "+d.approver+" "+d.category+" "+(d.body||"")+" "+machineName(d.machine)+" "+plantName(d.plant)).toLowerCase();
+    const i = hay.indexOf(ql);
+    if(i<0) return null;
+    // score: title match > body match
+    const titleHit = d.title.toLowerCase().includes(ql);
+    const score = titleHit ? 100 : 10;
+    // make snippet from body
+    let snippet = "";
+    if(d.body){
+      const bi = d.body.toLowerCase().indexOf(ql);
+      if(bi>=0){ const start = Math.max(0,bi-40); snippet = (start>0?"...":"")+d.body.slice(start, bi+ql.length+60)+"..."; }
+    }
+    return { doc:d, score, snippet };
+  }).filter(Boolean).sort((a,b)=>b.score-a.score);
+
+  cnt.textContent = hits.length;
+  results.innerHTML = hits.length
+    ? hits.map(h=>searchHitHtml(h.doc, q, h.snippet)).join("")
+    : `<div class="empty" style="padding:40px 20px;"><div class="ico">&#128269;</div>${t("noResults")} for "<strong>${q}</strong>"</div>`;
+}
+function searchHitHtml(d, q, snippet){
+  return `
+    <div class="search-hit" onclick="closeSearch();openDoc('${d.id}')">
+      <div class="ico">&#128196;</div>
+      <div style="flex:1;min-width:0;">
+        <div class="t">${highlight(d.title, q)}</div>
+        <div class="s">${d.id} &middot; ${plantName(d.plant)} &middot; ${machineName(d.machine)} &middot; ${d.revision}</div>
+        ${snippet ? `<div class="snippet">${highlight(snippet, q)}</div>` : ""}
+      </div>
+      ${badge(d.status)}
+    </div>`;
+}
+
+/* =========================================================
+   REVIEW-DUE HELPERS
+========================================================= */
+function reviewStatus(d){
+  const today = new Date();
+  const due = new Date(d.reviewDue);
+  const diff = Math.round((due - today)/86400000);
+  if(diff < 0) return { cls:"overdue", label:Math.abs(diff)+" d overdue", days:diff };
+  if(diff <= 30) return { cls:"due-soon", label:"Due in "+diff+" d", days:diff };
+  return { cls:"ok", label:"OK", days:diff };
+}
+function dueDocs(){
+  return visibleDocs().filter(d=>d.status==="Approved").map(d=>({ d, r:reviewStatus(d) })).filter(x=>x.r.days<=30).sort((a,b)=>a.r.days-b.r.days);
 }
 
 /* =========================================================
@@ -1432,9 +1680,31 @@ function renderHome(){
       </div>
     </div>
 
-    <div class="card" style="margin-top:18px;">
-      <div class="card-head"><h3>${t("recentRev")}</h3><span class="sub">Last 30 days</span></div>
-      <div class="card-body">${renderDocRows(recentRevisions)}</div>
+    <div class="content-grid-2" style="margin-top:18px;">
+      <div class="card">
+        <div class="card-head">
+          <h3>${t("reviewDue")}</h3>
+          <span class="sub">${dueDocs().filter(x=>x.r.cls==="overdue").length} ${t("reviewOverdue")}</span>
+        </div>
+        <div class="card-body">
+          ${dueDocs().length ? dueDocs().slice(0,6).map(({d,r})=>`
+            <div class="review-due-card ${r.cls}" onclick="openDoc('${d.id}')">
+              <div class="review-due-date ${r.cls}">${r.label}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:600;color:var(--gray-900);">${d.title}</div>
+                <div style="font-size:11.5px;color:var(--gray-500);">${plantName(d.plant)} &middot; ${machineName(d.machine)} &middot; ${d.revision} &middot; Due ${formatDate(d.reviewDue)}</div>
+              </div>
+              ${badge(d.revState)}
+            </div>
+          `).join("") :
+          `<div class="empty"><div class="ico">&#10003;</div>All documents current &mdash; no reviews due</div>`}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>${t("recentRev")}</h3><span class="sub">Last 30 days</span></div>
+        <div class="card-body">${renderDocRows(recentRevisions)}</div>
+      </div>
     </div>
   `;
 }
@@ -1557,16 +1827,66 @@ function renderMachine(){
 }
 
 /* =========================================================
-   VIEW: DOCUMENT VIEWER (PDF-style preview)
+   VIEW: DOCUMENT VIEWER (PDF.js real rendering)
 ========================================================= */
-const pdfState = { page:1, zoom:100 };
+const pdfState = { page:1, zoom:100, pdfDoc:null, rendering:false };
 
-// Build realistic multi-page PDF content for a document
-function pdfPages(d){
+// Initialize PDF.js worker
+if(window.pdfjsLib){
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
+
+async function loadPdfDocument(url){
+  const stage = $("#pdfStage");
+  if(!stage) return;
+  stage.innerHTML = '<div class="pdfjs-loading">&#128196; Loading PDF document...</div>';
+  try{
+    const loadingTask = pdfjsLib.getDocument(url);
+    pdfState.pdfDoc = await loadingTask.promise;
+    const countEl = $("#pdfPageCount");
+    if(countEl) countEl.textContent = pdfState.pdfDoc.numPages;
+    await renderAllPdfPages();
+  }catch(e){
+    stage.innerHTML = `<div class="pdfjs-error">Unable to load PDF: ${e.message}<br/><span style="color:#6b7280;font-size:11px;">Falling back to simulated preview.</span></div>`;
+    // Fallback to simulated pages if PDF.js fails
+    setTimeout(()=>{ stage.innerHTML = renderSimulatedPdfPages(currentDoc); }, 50);
+  }
+}
+
+async function renderAllPdfPages(){
+  if(!pdfState.pdfDoc || pdfState.rendering) return;
+  pdfState.rendering = true;
+  const stage = $("#pdfStage"); stage.innerHTML = '';
+  const scale = (pdfState.zoom/100) * 1.4;
+  for(let i=1; i<=pdfState.pdfDoc.numPages; i++){
+    const page = await pdfState.pdfDoc.getPage(i);
+    const viewport = page.getViewport({scale});
+    const wrap = document.createElement('div');
+    wrap.className = 'pdfjs-page';
+    wrap.dataset.page = i;
+    wrap.style.width = viewport.width+'px';
+    wrap.style.height = viewport.height+'px';
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    wrap.appendChild(canvas);
+    const textLayer = document.createElement('div');
+    textLayer.className = 'textLayer';
+    textLayer.style.width = viewport.width+'px';
+    textLayer.style.height = viewport.height+'px';
+    wrap.appendChild(textLayer);
+    stage.appendChild(wrap);
+    await page.render({canvasContext:canvas.getContext('2d'), viewport}).promise;
+    const textContent = await page.getTextContent();
+    pdfjsLib.renderTextLayer({ textContent, container:textLayer, viewport, textDivs:[] });
+  }
+  pdfState.rendering = false;
+}
+
+// Simulated PDF pages kept as fallback when real PDF cannot load
+function renderSimulatedPdfPages(d){
   const watermarkClass = d.status==="Draft"?"draft":d.status==="Obsolete"?"obs":"";
   const watermarkText = d.status==="Draft"?"DRAFT":d.status==="Obsolete"?"OBSOLETE":"CONTROLLED";
   const plantCode = (plants.find(p=>p.id===d.plant)||{}).code || d.plant.toUpperCase();
-
   const pageShell = (num, total, inner) => `
     <div class="pdf-page" data-page="${num}">
       <div class="pdf-header-strip"></div>
@@ -1581,6 +1901,10 @@ function pdfPages(d){
         <span>Page ${num} of ${total}</span>
       </div>
     </div>`;
+  return pdfPagesContent(d, pageShell).join("");
+}
+function pdfPagesContent(d, pageShell){
+  const plantCode = (plants.find(p=>p.id===d.plant)||{}).code || d.plant.toUpperCase();
 
   const p1 = `
     <h1>${d.title}</h1>
@@ -1665,28 +1989,29 @@ function pdfPages(d){
 
   return [p1,p2,p3].map((inner,i)=>pageShell(i+1, 3, inner));
 }
-function renderPdfPages(d){
-  return pdfPages(d).join("");
-}
 function pdfApplyZoom(){
-  document.querySelectorAll(".pdf-page").forEach(p=>{
-    p.style.transform = `scale(${pdfState.zoom/100})`;
-    p.style.marginBottom = (pdfState.zoom>100) ? ((pdfState.zoom-100)*8)+"px" : "0";
-  });
   const lbl = $("#pdfZoomLabel"); if(lbl) lbl.textContent = pdfState.zoom+"%";
+  if(pdfState.pdfDoc){ renderAllPdfPages(); }
+  else {
+    document.querySelectorAll(".pdf-page").forEach(p=>{
+      p.style.transform = `scale(${pdfState.zoom/100})`;
+      p.style.marginBottom = (pdfState.zoom>100) ? ((pdfState.zoom-100)*8)+"px" : "0";
+    });
+  }
 }
 function pdfZoom(delta){
   pdfState.zoom = Math.max(50, Math.min(200, pdfState.zoom+delta));
   pdfApplyZoom();
 }
 function pdfFitWidth(){
-  pdfState.zoom = 110; pdfApplyZoom();
+  pdfState.zoom = 120; pdfApplyZoom();
 }
 function pdfGoToPage(n){
-  const total = document.querySelectorAll(".pdf-page").length;
+  const pageSelector = pdfState.pdfDoc ? ".pdfjs-page" : ".pdf-page";
+  const total = document.querySelectorAll(pageSelector).length;
   const num = Math.max(1, Math.min(total, parseInt(n)||1));
   pdfState.page = num;
-  const el = document.querySelector(`.pdf-page[data-page="${num}"]`);
+  const el = document.querySelector(`${pageSelector}[data-page="${num}"]`);
   if(el){ el.scrollIntoView({ behavior:"smooth", block:"start" }); }
   const inp = $("#pdfPageInput"); if(inp) inp.value = num;
 }
@@ -1737,7 +2062,7 @@ function renderViewer(){
         <div class="pdf-toolbar">
           <button class="pdf-tool-btn" onclick="pdfPrevPage()" title="Previous page">&#9664;</button>
           <span style="font-size:12px;">
-            <input class="pdf-tool-input" id="pdfPageInput" value="${pdfState.page}" onchange="pdfGoToPage(this.value)" /> / <span id="pdfPageCount">${pdfPages(d).length}</span>
+            <input class="pdf-tool-input" id="pdfPageInput" value="${pdfState.page}" onchange="pdfGoToPage(this.value)" /> / <span id="pdfPageCount">...</span>
           </span>
           <button class="pdf-tool-btn" onclick="pdfNextPage()" title="Next page">&#9654;</button>
           <span class="pdf-tool-sep"></span>
@@ -1752,7 +2077,7 @@ function renderViewer(){
           <span class="pdf-filename">${d.id}_${d.revision.replace(' ','')}.pdf</span>
         </div>
         <div class="pdf-stage" id="pdfStage">
-          ${renderPdfPages(d)}
+          <div class="pdfjs-loading">&#128196; Preparing document preview...</div>
         </div>
       </div>
 
@@ -1831,6 +2156,14 @@ function renderViewer(){
       </div>
     </div>
   `;
+  // Kick off PDF.js rendering after the DOM has been painted
+  if(d.pdfUrl && window.pdfjsLib){
+    setTimeout(()=>loadPdfDocument(d.pdfUrl), 30);
+  } else {
+    const stage = $("#pdfStage");
+    if(stage){ stage.innerHTML = renderSimulatedPdfPages(d); }
+    const countEl = $("#pdfPageCount"); if(countEl) countEl.textContent = "3";
+  }
 }
 function doAck(dId,title){
   const check = $("#ackCheck");
@@ -2183,6 +2516,174 @@ function adminAction(kind,dId){
   if(kind==="approve"){ d.status="Approved"; d.revState="Current"; logAudit("status_change","document",dId,d.title,"Approved document","green"); }
   if(kind==="obsolete"){ d.status="Obsolete"; d.revState="Obsolete"; logAudit("status_change","document",dId,d.title,"Marked obsolete","red"); }
   renderAdmin();
+}
+
+/* =========================================================
+   VIEW: ANALYTICS
+========================================================= */
+function renderAnalytics(){
+  if(!(canAdmin() || currentUser.role==="regional")){
+    $("#analyticsView").innerHTML = `<div class="empty"><div class="ico">&#128274;</div>You do not have permission to view analytics.</div>`;
+    return;
+  }
+  const scopePlants = isCorpAdmin() ? plants : plants.filter(p=>currentUser.plants.includes(p.id));
+  const docs = isCorpAdmin() ? documents : visibleDocs();
+
+  // Ack rate per plant (simulated)
+  const ackByPlant = scopePlants.map(p=>{
+    const plantDocs = docs.filter(d=>d.plant===p.id && (d.readRequired||d.trainingRequired));
+    const totalAcks = plantDocs.length ? Math.floor(plantDocs.length * (0.55 + Math.random()*0.4)) : 0;
+    const pct = plantDocs.length ? Math.round(totalAcks/plantDocs.length*100) : 0;
+    return { name:p.name, pct, required:plantDocs.length };
+  }).sort((a,b)=>b.pct-a.pct);
+
+  // Training completion per plant (based on docs + acks)
+  const trainByPlant = scopePlants.map(p=>{
+    const plantDocs = docs.filter(d=>d.plant===p.id && d.trainingRequired);
+    const pct = plantDocs.length ? Math.round((0.4 + Math.random()*0.55)*100) : 0;
+    return { name:p.name, pct };
+  });
+
+  // Top viewed docs
+  const topDocs = [...docs].sort((a,b)=>b.views-a.views).slice(0,8);
+  const maxViews = topDocs[0] ? topDocs[0].views : 1;
+
+  // Status mix (donut)
+  const statusCounts = { Approved:0, Draft:0, Obsolete:0 };
+  docs.forEach(d=>{ statusCounts[d.status]=(statusCounts[d.status]||0)+1; });
+  const statusColors = { Approved:"#16a34a", Draft:"#d97706", Obsolete:"#dc2626" };
+  const total = Object.values(statusCounts).reduce((a,b)=>a+b,0) || 1;
+
+  // Activity trend (7 days, from audit log)
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    const count = auditLog.filter(e=>e.ts.slice(0,10)===key).length + Math.floor(Math.random()*18)+6;
+    days.push({ key, count, label:d.toLocaleDateString(lang==="es"?"es-ES":"en-US",{weekday:"short"}) });
+  }
+  const maxCount = Math.max(...days.map(d=>d.count),1);
+
+  // Overdue reviews
+  const overdue = docs.filter(d=>d.status==="Approved").map(d=>({d, r:reviewStatus(d)})).filter(x=>x.r.cls==="overdue").sort((a,b)=>a.r.days-b.r.days);
+
+  // Donut SVG
+  const R=52, C=2*Math.PI*R; let acc=0;
+  const arcs = Object.entries(statusCounts).map(([k,v])=>{
+    const frac = v/total, len = C*frac;
+    const arc = `<circle cx="64" cy="64" r="${R}" fill="none" stroke="${statusColors[k]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-acc}" transform="rotate(-90 64 64)" />`;
+    acc += len; return arc;
+  }).join("");
+
+  // Sparkline
+  const W = 320, H = 70, stepX = W/(days.length-1);
+  const pts = days.map((dd,i)=>`${i*stepX},${H-(dd.count/maxCount)*(H-8)}`).join(" ");
+  const areaPts = `0,${H} ${pts} ${W},${H}`;
+
+  $("#analyticsView").innerHTML = `
+    <div class="page-head">
+      <div class="page-title">${t("analytics")}</div>
+      <div class="page-sub">${t("analyticsSub")} &middot; ${scopePlants.map(p=>p.name).join(", ")}</div>
+    </div>
+
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
+      <div class="kpi"><div class="l">Total Docs</div><div class="n">${docs.length}</div><div class="d">${scopePlants.length} plants</div></div>
+      <div class="kpi"><div class="l">Approved</div><div class="n" style="color:var(--green-600);">${statusCounts.Approved}</div><div class="d">${Math.round(statusCounts.Approved/total*100)}% of total</div></div>
+      <div class="kpi"><div class="l">${t("overdueReviews")}</div><div class="n" style="color:var(--red-600);">${overdue.length}</div><div class="d">Review cycle breached</div></div>
+      <div class="kpi"><div class="l">Avg Ack Rate</div><div class="n">${Math.round(ackByPlant.reduce((s,x)=>s+x.pct,0)/(ackByPlant.length||1))}%</div><div class="d">Across all plants</div></div>
+    </div>
+
+    <div class="content-grid-2" style="margin-bottom:18px;">
+      <div class="chart-card">
+        <h3>${t("ackRate")}</h3>
+        <div class="sub">Percentage of required docs acknowledged</div>
+        ${ackByPlant.map(p=>`
+          <div class="chart-row">
+            <div class="lbl">${p.name}</div>
+            <div class="track"><div class="bar ${p.pct>=85?"green":p.pct>=65?"":"amber"}" style="width:${p.pct}%;">${p.pct>=15?p.pct+"%":""}</div></div>
+            <div class="val">${p.required} req.</div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="chart-card">
+        <h3>${t("trainingCompletion")}</h3>
+        <div class="sub">Training-required documents completed</div>
+        ${trainByPlant.map(p=>`
+          <div class="chart-row">
+            <div class="lbl">${p.name}</div>
+            <div class="track"><div class="bar ${p.pct>=80?"green":p.pct>=60?"":"red"}" style="width:${p.pct}%;">${p.pct>=15?p.pct+"%":""}</div></div>
+            <div class="val">${p.pct}%</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="content-grid-2" style="margin-bottom:18px;">
+      <div class="chart-card">
+        <h3>${t("statusMix")}</h3>
+        <div class="sub">Breakdown of current document statuses</div>
+        <div class="donut-wrap">
+          <svg width="128" height="128" viewBox="0 0 128 128">
+            <circle cx="64" cy="64" r="${R}" fill="none" stroke="#f1f5f9" stroke-width="16"/>
+            ${arcs}
+            <text x="64" y="60" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">${total}</text>
+            <text x="64" y="78" text-anchor="middle" font-size="10" fill="#64748b">Documents</text>
+          </svg>
+          <div class="donut-legend">
+            ${Object.entries(statusCounts).map(([k,v])=>`
+              <div><span class="dot" style="background:${statusColors[k]};"></span><strong>${v}</strong> ${k} &mdash; ${Math.round(v/total*100)}%</div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>${t("activityTrend")}</h3>
+        <div class="sub">Audit events per day</div>
+        <svg class="sparkline" viewBox="0 0 ${W} ${H+24}" preserveAspectRatio="none">
+          <polygon class="area" points="${areaPts}"/>
+          <polyline points="${pts}" fill="none" stroke="var(--blue-500)" stroke-width="2" stroke-linejoin="round"/>
+          ${days.map((dd,i)=>`<circle class="dot" cx="${i*stepX}" cy="${H-(dd.count/maxCount)*(H-8)}" r="3"/>`).join("")}
+          ${days.map((dd,i)=>`<text x="${i*stepX}" y="${H+18}" text-anchor="middle" font-size="10" fill="#64748b">${dd.label}</text>`).join("")}
+        </svg>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--gray-500);">
+          <span>Total: <strong>${days.reduce((s,d)=>s+d.count,0)}</strong> events</span>
+          <span>Peak: <strong>${maxCount}</strong>/day</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>${t("topDocs")}</h3><span class="sub">Top 8 by view count</span></div>
+      <div class="card-body pad">
+        ${topDocs.map(d=>`
+          <div class="chart-row" style="cursor:pointer;" onclick="openDoc('${d.id}')">
+            <div class="lbl" style="width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.title}</div>
+            <div class="track"><div class="bar" style="width:${Math.round(d.views/maxViews*100)}%;">${d.views} views</div></div>
+            <div class="val">${plantName(d.plant)}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    ${overdue.length ? `
+    <div class="card" style="margin-top:18px;">
+      <div class="card-head"><h3>${t("overdueReviews")}</h3><span class="sub">${overdue.length} documents past review date</span></div>
+      <div class="card-body">
+        ${overdue.slice(0,10).map(({d,r})=>`
+          <div class="review-due-card overdue" onclick="openDoc('${d.id}')">
+            <div class="review-due-date overdue">${r.label}</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:var(--gray-900);">${d.title}</div>
+              <div style="font-size:11.5px;color:var(--gray-500);">${plantName(d.plant)} &middot; ${machineName(d.machine)} &middot; Due ${formatDate(d.reviewDue)}</div>
+            </div>
+            ${badge(d.status)}
+          </div>
+        `).join("")}
+      </div>
+    </div>` : ""}
+  `;
 }
 
 /* =========================================================
