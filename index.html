@@ -501,28 +501,121 @@ a{color:inherit;text-decoration:none;}
   background:#fff;border:1px solid var(--gray-200);
   border-radius:var(--radius-lg);
   min-height:600px;padding:0;overflow:hidden;
+  display:flex;flex-direction:column;
 }
 .viewer-head{
-  padding:20px 24px;border-bottom:1px solid var(--gray-100);
+  padding:18px 22px;border-bottom:1px solid var(--gray-100);
   display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  background:#fff;
 }
-.viewer-title{font-size:18px;font-weight:700;color:var(--gray-900);margin-bottom:6px;}
-.viewer-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.viewer-title{font-size:17px;font-weight:700;color:var(--gray-900);margin-bottom:6px;}
+.viewer-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
 .viewer-metatext{font-size:12px;color:var(--gray-500);}
-.viewer-page{
-  padding:40px 60px;background:#fcfcfd;
-  min-height:500px;
-  font-family:Georgia,serif;
-  color:var(--gray-800);line-height:1.75;
+
+/* PDF-style preview viewer */
+.pdf-toolbar{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 14px;background:#323639;color:#e5e7eb;
+  border-bottom:1px solid #1f2937;flex-wrap:wrap;
+  font-size:12.5px;
 }
-.viewer-page h1{font-size:22px;margin-bottom:12px;}
-.viewer-page h2{font-size:16px;margin:18px 0 8px;color:var(--gray-900);}
-.viewer-page p{margin-bottom:12px;font-size:14px;}
-.viewer-page ol{padding-left:22px;margin-bottom:12px;}
-.viewer-page li{margin-bottom:6px;font-size:14px;}
+.pdf-tool-btn{
+  color:#e5e7eb;padding:6px 10px;border-radius:6px;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:background .15s;
+  font-size:12.5px;
+}
+.pdf-tool-btn:hover{background:rgba(255,255,255,0.12);}
+.pdf-tool-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.pdf-tool-sep{width:1px;height:22px;background:rgba(255,255,255,0.15);margin:0 4px;}
+.pdf-tool-input{
+  background:#1f2937;border:1px solid #4b5563;color:#fff;
+  border-radius:4px;padding:4px 6px;width:44px;text-align:center;font-size:12px;
+}
+.pdf-tool-zoom{
+  background:#1f2937;border:1px solid #4b5563;color:#fff;
+  padding:4px 8px;border-radius:4px;font-size:12px;min-width:64px;
+}
+.pdf-filename{font-size:12.5px;color:#cbd5e1;margin-left:auto;font-weight:500;}
+
+.pdf-stage{
+  flex:1;background:#525659;
+  padding:20px;overflow:auto;
+  min-height:600px;max-height:900px;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+.pdf-page{
+  background:#fff;color:#111827;
+  width:640px;min-height:820px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.35);
+  padding:56px 64px;
+  position:relative;
+  font-family:"Times New Roman",Georgia,serif;
+  line-height:1.65;
+  transform-origin:top center;
+  transition:transform .2s ease;
+}
+.pdf-page .pdf-header-strip{
+  position:absolute;top:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--navy-700),var(--blue-500));
+}
+.pdf-page-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:12px;margin-bottom:24px;
+  border-bottom:1px solid #e5e7eb;
+  font-family:var(--font);font-size:10px;color:#6b7280;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.pdf-page-header .pdf-logo{
+  display:flex;align-items:center;gap:8px;font-weight:700;color:var(--navy-700);
+}
+.pdf-page-header .pdf-logo-mark{
+  width:20px;height:20px;border-radius:4px;
+  background:linear-gradient(135deg,var(--navy-700),var(--blue-500));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:11px;
+}
+.pdf-page h1{font-size:20px;margin-bottom:8px;color:#111827;font-family:var(--font);font-weight:700;}
+.pdf-page h2{font-size:14px;margin:20px 0 8px;color:#111827;font-family:var(--font);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;}
+.pdf-page p{margin-bottom:10px;font-size:12.5px;color:#1f2937;}
+.pdf-page ol,.pdf-page ul{padding-left:22px;margin-bottom:12px;}
+.pdf-page li{margin-bottom:6px;font-size:12.5px;color:#1f2937;}
+.pdf-page-footer{
+  position:absolute;bottom:20px;left:64px;right:64px;
+  display:flex;justify-content:space-between;
+  font-family:var(--font);font-size:10px;color:#9ca3af;
+  padding-top:10px;border-top:1px solid #f3f4f6;
+}
+.pdf-page-watermark{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) rotate(-30deg);
+  font-family:var(--font);font-size:90px;font-weight:800;
+  color:rgba(16,185,129,0.06);pointer-events:none;
+  letter-spacing:4px;
+}
+.pdf-page-watermark.draft{color:rgba(245,158,11,0.08);}
+.pdf-page-watermark.obs{color:rgba(220,38,38,0.08);}
+
+.pdf-info-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 20px;
+  background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;
+  padding:12px 14px;margin:12px 0 18px;font-family:var(--font);
+}
+.pdf-info-grid .lbl{font-size:9.5px;color:#6b7280;text-transform:uppercase;letter-spacing:0.4px;font-weight:600;}
+.pdf-info-grid .val{font-size:12px;color:#111827;font-weight:500;margin-top:2px;}
+
+.pdf-signoff{
+  margin-top:22px;padding-top:14px;border-top:1px solid #e5e7eb;
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;font-family:var(--font);
+}
+.pdf-signoff .sig-box{font-size:11px;}
+.pdf-signoff .sig-line{border-bottom:1px solid #9ca3af;height:22px;margin-bottom:4px;}
+.pdf-signoff .sig-lbl{color:#6b7280;font-size:10px;}
+
 .viewer-notice{
-  background:var(--amber-50);border-left:3px solid var(--amber-600);
-  padding:10px 14px;margin:12px 0;font-size:13px;color:var(--gray-700);font-family:var(--font);
+  background:#fef3c7;border-left:3px solid #d97706;
+  padding:8px 12px;margin:10px 0;font-size:11.5px;color:#78350f;font-family:var(--font);
+  border-radius:3px;
 }
 
 .viewer-side{display:flex;flex-direction:column;gap:18px;}
@@ -1464,13 +1557,153 @@ function renderMachine(){
 }
 
 /* =========================================================
-   VIEW: DOCUMENT VIEWER
+   VIEW: DOCUMENT VIEWER (PDF-style preview)
 ========================================================= */
+const pdfState = { page:1, zoom:100 };
+
+// Build realistic multi-page PDF content for a document
+function pdfPages(d){
+  const watermarkClass = d.status==="Draft"?"draft":d.status==="Obsolete"?"obs":"";
+  const watermarkText = d.status==="Draft"?"DRAFT":d.status==="Obsolete"?"OBSOLETE":"CONTROLLED";
+  const plantCode = (plants.find(p=>p.id===d.plant)||{}).code || d.plant.toUpperCase();
+
+  const pageShell = (num, total, inner) => `
+    <div class="pdf-page" data-page="${num}">
+      <div class="pdf-header-strip"></div>
+      <div class="pdf-page-watermark ${watermarkClass}">${watermarkText}</div>
+      <div class="pdf-page-header">
+        <div class="pdf-logo"><div class="pdf-logo-mark">M</div> SouthWest Region &mdash; Document Control</div>
+        <div>${d.id} &middot; ${d.revision}</div>
+      </div>
+      ${inner}
+      <div class="pdf-page-footer">
+        <span>${plantCode}-${d.category.toUpperCase()}-${d.id.replace('DOC-','')} &middot; Effective ${formatDate(d.effective)}</span>
+        <span>Page ${num} of ${total}</span>
+      </div>
+    </div>`;
+
+  const p1 = `
+    <h1>${d.title}</h1>
+    <div class="pdf-info-grid">
+      <div><div class="lbl">Document ID</div><div class="val">${d.id}</div></div>
+      <div><div class="lbl">Revision</div><div class="val">${d.revision}</div></div>
+      <div><div class="lbl">Status</div><div class="val">${d.status}</div></div>
+      <div><div class="lbl">Plant</div><div class="val">${plantName(d.plant)}</div></div>
+      <div><div class="lbl">Machine</div><div class="val">${machineName(d.machine)}</div></div>
+      <div><div class="lbl">Category</div><div class="val">${d.category}</div></div>
+      <div><div class="lbl">Owner</div><div class="val">${d.owner}</div></div>
+      <div><div class="lbl">Approver</div><div class="val">${d.approver}</div></div>
+      <div><div class="lbl">Effective</div><div class="val">${formatDate(d.effective)}</div></div>
+    </div>
+    <div class="viewer-notice">This is a controlled document. Printed copies are uncontrolled unless stamped in red by ${d.approver}.</div>
+    <h2>1. Purpose</h2>
+    <p>This procedure defines the standard method for the safe and consistent operation of <strong>${machineName(d.machine)}</strong> at the ${plantName(d.plant)} facility. All operators, supervisors and maintenance personnel must comply with the steps described herein to ensure product quality, equipment reliability and personnel safety.</p>
+    <h2>2. Scope</h2>
+    <p>This document applies to all shifts and all production orders run on the referenced equipment. Deviations require written approval by the Plant Manager and the Quality Manager. This procedure supersedes all prior revisions in any format.</p>
+    <h2>3. Definitions</h2>
+    <ul>
+      <li><strong>LOTO:</strong> Lockout/Tagout &mdash; energy isolation procedure.</li>
+      <li><strong>PM:</strong> Preventive Maintenance.</li>
+      <li><strong>PPE:</strong> Personal Protective Equipment.</li>
+      <li><strong>SOP:</strong> Standard Operating Procedure.</li>
+    </ul>`;
+
+  const p2 = `
+    <h2>4. Safety Requirements</h2>
+    <ol>
+      <li>Verify all guarding is in place prior to startup.</li>
+      <li>Apply Lockout/Tagout per Safety SOP-LOTO-Rev 2 before any service access.</li>
+      <li>Wear required PPE: ANSI Z87.1 safety glasses, hearing protection (&ge; 85 dB areas), steel-toe footwear, cut-resistant gloves when handling film or blades.</li>
+      <li>Confirm emergency stop is functional on each shift start and document on the daily verification log.</li>
+      <li>Review all Material Safety Data Sheets for materials in use before operation.</li>
+    </ol>
+    <h2>5. Required Tools &amp; Materials</h2>
+    <ul>
+      <li>Calibrated torque wrench (range 10&ndash;100 Nm).</li>
+      <li>Feeler gauge set.</li>
+      <li>Approved lubricant (see SOP-LUB-001).</li>
+      <li>Pre-start inspection form QA-F-012.</li>
+    </ul>
+    <h2>6. Procedure</h2>
+    <ol>
+      <li><strong>Pre-Start Inspection.</strong> Complete form QA-F-012 and verify no outstanding maintenance tags are present.</li>
+      <li><strong>Recipe Verification.</strong> Confirm the loaded recipe and tooling match the production schedule. Document recipe number on the shift log.</li>
+      <li><strong>Startup Sequence.</strong> Start the equipment in accordance with the startup sequence displayed at the HMI. Do not bypass any interlock.</li>
+      <li><strong>Process Monitoring.</strong> Record process variables at the intervals defined in Section 7. Investigate any out-of-spec readings immediately.</li>
+      <li><strong>Quality Checks.</strong> Perform first-piece inspection per Quality Plan QP-${plantCode}-${d.category.substring(0,2).toUpperCase()}.</li>
+      <li><strong>Shutdown.</strong> At end of run, perform shutdown and complete the end-of-run checklist.</li>
+    </ol>`;
+
+  const p3 = `
+    <h2>7. Process Parameters</h2>
+    <p>Record readings at 30-minute intervals. Any value outside the control limits requires immediate supervisor notification and documentation on the non-conformance log.</p>
+    <ul>
+      <li>Temperature range: per product specification sheet.</li>
+      <li>Line speed: per recipe card.</li>
+      <li>Tension / pressure: within machine manual tolerances.</li>
+    </ul>
+    <h2>8. Troubleshooting</h2>
+    <p>Refer to Troubleshooting Guide for ${machineName(d.machine)}. Escalation path: Operator &rarr; Lead &rarr; Supervisor &rarr; Maintenance Tech. Do not attempt mechanical repairs without proper LOTO and authorization.</p>
+    <h2>9. Records</h2>
+    <ul>
+      <li>Form QA-F-012 (Pre-Start Inspection) &mdash; retained 3 years.</li>
+      <li>Shift Production Log &mdash; retained 3 years.</li>
+      <li>Acknowledgment of this procedure is tracked electronically in the Document Control Portal.</li>
+    </ul>
+    <h2>10. Revision History</h2>
+    <p>See the revision history panel for a complete list of approved revisions. Only the revision marked <strong>Current</strong> is authorized for use.</p>
+    <div class="pdf-signoff">
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-lbl">Prepared by: ${d.owner}</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-lbl">Approved by: ${d.approver}</div>
+      </div>
+    </div>`;
+
+  return [p1,p2,p3].map((inner,i)=>pageShell(i+1, 3, inner));
+}
+function renderPdfPages(d){
+  return pdfPages(d).join("");
+}
+function pdfApplyZoom(){
+  document.querySelectorAll(".pdf-page").forEach(p=>{
+    p.style.transform = `scale(${pdfState.zoom/100})`;
+    p.style.marginBottom = (pdfState.zoom>100) ? ((pdfState.zoom-100)*8)+"px" : "0";
+  });
+  const lbl = $("#pdfZoomLabel"); if(lbl) lbl.textContent = pdfState.zoom+"%";
+}
+function pdfZoom(delta){
+  pdfState.zoom = Math.max(50, Math.min(200, pdfState.zoom+delta));
+  pdfApplyZoom();
+}
+function pdfFitWidth(){
+  pdfState.zoom = 110; pdfApplyZoom();
+}
+function pdfGoToPage(n){
+  const total = document.querySelectorAll(".pdf-page").length;
+  const num = Math.max(1, Math.min(total, parseInt(n)||1));
+  pdfState.page = num;
+  const el = document.querySelector(`.pdf-page[data-page="${num}"]`);
+  if(el){ el.scrollIntoView({ behavior:"smooth", block:"start" }); }
+  const inp = $("#pdfPageInput"); if(inp) inp.value = num;
+}
+function pdfPrevPage(){ pdfGoToPage(pdfState.page-1); }
+function pdfNextPage(){ pdfGoToPage(pdfState.page+1); }
+function pdfFullscreen(){
+  const el = $("#pdfStage");
+  if(!document.fullscreenElement && el && el.requestFullscreen){ el.requestFullscreen(); }
+  else if(document.exitFullscreen){ document.exitFullscreen(); }
+}
+
 function openDoc(dId){
   currentDoc = documents.find(d=>d.id===dId);
   if(!currentDoc) return;
+  pdfState.page = 1; pdfState.zoom = 100;
   addRecent(dId);
-  logAudit("open","document",dId,currentDoc.title,"Opened document","blue");
+  logAudit("open","document",dId,currentDoc.title,"Opened document preview","blue");
   show("viewer");
 }
 function renderViewer(){
@@ -1501,31 +1734,25 @@ function renderViewer(){
             <span class="star ${isFavDoc(d.id)?"on":""}" onclick="toggleFavoriteDoc('${d.id}');renderViewer();" style="font-size:20px;">&#9733;</span>
           </div>
         </div>
-        <div class="viewer-page">
-          <h1>${d.title}</h1>
-          <p><strong>${t("docId")}:</strong> ${d.id} &nbsp; <strong>${t("revision")}:</strong> ${d.revision} &nbsp; <strong>${t("effective")}:</strong> ${formatDate(d.effective)}</p>
-          <div class="viewer-notice">This is a controlled document. Printed copies are uncontrolled unless stamped by ${d.approver}.</div>
-          <h2>1. Purpose</h2>
-          <p>This procedure defines the standard method for the safe and consistent operation of <strong>${machineName(d.machine)}</strong> at the ${plantName(d.plant)} facility. All operators, supervisors and maintenance personnel must comply with the steps described herein.</p>
-          <h2>2. Scope</h2>
-          <p>This document applies to all shifts and all production orders run on the referenced equipment. Deviations require written approval by the Plant Manager and the Quality Manager.</p>
-          <h2>3. Safety Requirements</h2>
-          <ol>
-            <li>Verify all guarding is in place prior to startup.</li>
-            <li>Lockout/Tagout per Safety SOP-LOTO-Rev 2 before any service access.</li>
-            <li>Wear required PPE: safety glasses, hearing protection, steel-toe footwear.</li>
-            <li>Confirm emergency stop is functional on each shift start.</li>
-          </ol>
-          <h2>4. Procedure</h2>
-          <ol>
-            <li>Complete pre-start inspection and record on form QA-F-012.</li>
-            <li>Verify recipe and tooling match the production schedule.</li>
-            <li>Start the equipment in accordance with the startup sequence.</li>
-            <li>Monitor process variables and record at required intervals.</li>
-            <li>At end of run, perform shutdown and complete end-of-run checklist.</li>
-          </ol>
-          <h2>5. Revision History</h2>
-          <p>See revision history panel on the right for a complete list of approved revisions.</p>
+        <div class="pdf-toolbar">
+          <button class="pdf-tool-btn" onclick="pdfPrevPage()" title="Previous page">&#9664;</button>
+          <span style="font-size:12px;">
+            <input class="pdf-tool-input" id="pdfPageInput" value="${pdfState.page}" onchange="pdfGoToPage(this.value)" /> / <span id="pdfPageCount">${pdfPages(d).length}</span>
+          </span>
+          <button class="pdf-tool-btn" onclick="pdfNextPage()" title="Next page">&#9654;</button>
+          <span class="pdf-tool-sep"></span>
+          <button class="pdf-tool-btn" onclick="pdfZoom(-10)" title="Zoom out">&minus;</button>
+          <span class="pdf-tool-zoom" id="pdfZoomLabel">${pdfState.zoom}%</span>
+          <button class="pdf-tool-btn" onclick="pdfZoom(10)" title="Zoom in">+</button>
+          <button class="pdf-tool-btn" onclick="pdfFitWidth()" title="Fit width">&#8644;</button>
+          <span class="pdf-tool-sep"></span>
+          <button class="pdf-tool-btn" onclick="logAudit('print','document','${d.id}','${d.title}','Printed from preview','blue');window.print();" title="Print">&#128424;</button>
+          <button class="pdf-tool-btn" onclick="logAudit('download','document','${d.id}','${d.title}','Downloaded PDF','blue');alert('Download started (simulated)');" title="Download">&#128229;</button>
+          <button class="pdf-tool-btn" onclick="pdfFullscreen()" title="Fullscreen">&#9974;</button>
+          <span class="pdf-filename">${d.id}_${d.revision.replace(' ','')}.pdf</span>
+        </div>
+        <div class="pdf-stage" id="pdfStage">
+          ${renderPdfPages(d)}
         </div>
       </div>
 
