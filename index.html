@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Machine Document Control Portal</title>
+<style>
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+:root{
+  --navy-900:#0b1f3b;
+  --navy-800:#0f2a4f;
+  --navy-700:#14356a;
+  --navy-600:#1d4789;
+  --blue-500:#2563eb;
+  --blue-400:#3b82f6;
+  --blue-50:#eff6ff;
+  --accent:#f59e0b;
+  --green-600:#16a34a;
+  --green-50:#dcfce7;
+  --red-600:#dc2626;
+  --red-50:#fee2e2;
+  --amber-600:#d97706;
+  --amber-50:#fef3c7;
+  --gray-900:#0f172a;
+  --gray-800:#1e293b;
+  --gray-700:#334155;
+  --gray-600:#475569;
+  --gray-500:#64748b;
+  --gray-400:#94a3b8;
+  --gray-300:#cbd5e1;
+  --gray-200:#e2e8f0;
+  --gray-100:#f1f5f9;
+  --gray-50:#f8fafc;
+  --white:#ffffff;
+  --shadow-sm:0 1px 2px rgba(15,23,42,0.06);
+  --shadow-md:0 4px 10px rgba(15,23,42,0.08);
+  --shadow-lg:0 10px 25px rgba(15,23,42,0.12);
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:14px;
+  --radius-xl:18px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:var(--font);
+  color:var(--gray-800);
+  background:var(--gray-50);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+input,select,textarea{font-family:inherit;font-size:14px;}
+a{color:inherit;text-decoration:none;}
+.hidden{display:none !important;}
+
+/* =========================================================
+   LOGIN SCREEN
+   ========================================================= */
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(37,99,235,0.15), transparent 60%),
+    radial-gradient(900px 500px at 100% 110%, rgba(29,71,137,0.25), transparent 60%),
+    linear-gradient(135deg,#0b1f3b 0%,#14356a 60%,#1d4789 100%);
+  color:var(--white);
+}
+.login-side{
+  flex:1.1;
+  padding:60px 70px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.login-brand{
+  display:flex;align-items:center;gap:14px;
+}
+.login-brand-mark{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 18px rgba(37,99,235,0.45);
+  font-weight:700;font-size:18px;
+}
+.login-brand-name{font-size:16px;font-weight:600;letter-spacing:0.3px;color:#cbd5e1;}
+.login-hero h1{
+  font-size:44px;line-height:1.1;font-weight:700;margin-bottom:18px;
+  letter-spacing:-0.5px;
+}
+.login-hero p{
+  font-size:17px;max-width:520px;color:#c7d2fe;line-height:1.6;margin-bottom:36px;
+}
+.feature-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:560px;
+}
+.feature-item{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);
+  padding:16px 18px;border-radius:var(--radius-md);
+}
+.feature-item .ico{font-size:20px;margin-bottom:8px;}
+.feature-item h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+.feature-item p{font-size:12.5px;color:#cbd5e1;line-height:1.45;}
+.login-footer-note{font-size:12px;color:#94a3b8;}
+
+.login-panel{
+  flex:0.9;
+  background:var(--white);
+  color:var(--gray-800);
+  padding:60px 70px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.login-card{max-width:420px;width:100%;margin:0 auto;}
+.login-card h2{font-size:26px;font-weight:700;color:var(--gray-900);margin-bottom:6px;}
+.login-card .muted{color:var(--gray-500);margin-bottom:28px;font-size:14px;}
+.form-group{margin-bottom:16px;}
+.form-group label{
+  display:block;font-weight:500;font-size:13px;color:var(--gray-700);margin-bottom:6px;
+}
+.form-control{
+  width:100%;padding:11px 14px;
+  border:1px solid var(--gray-300);
+  border-radius:var(--radius-md);
+  font-size:14px;color:var(--gray-800);
+  background:var(--white);
+  transition:border-color .15s, box-shadow .15s;
+}
+.form-control:focus{
+  outline:none;border-color:var(--blue-500);
+  box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+}
+.row-between{display:flex;align-items:center;justify-content:space-between;margin:6px 0 22px;}
+.checkbox{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-600);}
+.link-text{font-size:13px;color:var(--blue-500);font-weight:500;}
+.btn-primary{
+  display:block;width:100%;padding:12px 16px;
+  background:linear-gradient(135deg,var(--navy-700),var(--blue-500));
+  color:#fff;font-weight:600;font-size:14px;
+  border-radius:var(--radius-md);
+  transition:transform .1s, box-shadow .15s;
+  box-shadow:0 6px 14px rgba(37,99,235,0.25);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(37,99,235,0.32);}
+.divider{
+  display:flex;align-items:center;gap:10px;margin:24px 0 16px;
+  color:var(--gray-400);font-size:12px;
+}
+.divider::before,.divider::after{
+  content:"";flex:1;height:1px;background:var(--gray-200);
+}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.demo-btn{
+  padding:10px 12px;border:1px solid var(--gray-200);
+  border-radius:var(--radius-md);
+  background:var(--white);
+  text-align:left;font-size:12px;
+  transition:all .15s;
+}
+.demo-btn:hover{
+  border-color:var(--blue-400);
+  background:var(--blue-50);
+}
+.demo-btn strong{display:block;color:var(--gray-900);font-size:12.5px;font-weight:600;margin-bottom:2px;}
+.demo-btn span{color:var(--gray-500);font-size:11.5px;}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+#appShell{display:none;min-height:100vh;flex-direction:column;}
+.topnav{
+  background:linear-gradient(180deg,var(--navy-800),var(--navy-900));
+  color:#fff;
+  padding:0 28px;
+  height:62px;
+  display:flex;align-items:center;
+  box-shadow:0 2px 6px rgba(15,23,42,0.15);
+  position:sticky;top:0;z-index:50;
+}
+.topnav-brand{display:flex;align-items:center;gap:12px;min-width:280px;}
+.brand-mark{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;
+}
+.brand-title{font-weight:600;font-size:15px;letter-spacing:0.2px;line-height:1.2;}
+.brand-title .sub{font-size:11.5px;font-weight:400;color:#94a3b8;display:block;}
+.topnav-links{display:flex;gap:4px;margin-left:28px;flex:1;}
+.topnav-link{
+  padding:8px 14px;border-radius:8px;
+  color:#cbd5e1;font-size:13px;font-weight:500;
+  transition:background .15s,color .15s;
+  cursor:pointer;
+}
+.topnav-link:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.topnav-link.active{background:rgba(255,255,255,0.14);color:#fff;}
+.topnav-right{display:flex;align-items:center;gap:14px;}
+.topnav-icon{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#cbd5e1;transition:background .15s,color .15s;
+}
+.topnav-icon:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.lang-toggle{
+  display:flex;background:rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;
+}
+.lang-toggle button{
+  padding:6px 10px;font-size:12px;color:#cbd5e1;font-weight:500;
+}
+.lang-toggle button.active{background:var(--blue-500);color:#fff;}
+.user-chip{
+  display:flex;align-items:center;gap:10px;
+  padding:4px 10px 4px 4px;
+  background:rgba(255,255,255,0.08);
+  border-radius:999px;
+  cursor:pointer;transition:background .15s;
+}
+.user-chip:hover{background:rgba(255,255,255,0.15);}
+.avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:12px;color:#fff;
+}
+.user-chip .info{font-size:12px;line-height:1.2;}
+.user-chip .info .n{font-weight:600;}
+.user-chip .info .r{color:#94a3b8;font-size:11px;}
+
+/* User switcher dropdown */
+.user-menu{
+  position:absolute;top:56px;right:24px;
+  background:#fff;color:var(--gray-800);
+  min-width:300px;
+  border-radius:var(--radius-md);box-shadow:var(--shadow-lg);
+  border:1px solid var(--gray-200);
+  z-index:100;display:none;overflow:hidden;
+}
+.user-menu.open{display:block;}
+.user-menu-head{padding:14px 16px;border-bottom:1px solid var(--gray-100);background:var(--gray-50);}
+.user-menu-head .t{font-size:11px;color:var(--gray-500);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.user-menu-item{
+  padding:12px 16px;cursor:pointer;
+  border-bottom:1px solid var(--gray-100);
+  transition:background .15s;
+  display:flex;align-items:center;gap:12px;
+}
+.user-menu-item:hover{background:var(--blue-50);}
+.user-menu-item:last-child{border-bottom:none;}
+.user-menu-item .avatar{background:linear-gradient(135deg,var(--navy-700),var(--blue-500));}
+.user-menu-item .n{font-weight:600;font-size:13px;color:var(--gray-900);}
+.user-menu-item .r{font-size:11.5px;color:var(--gray-500);}
+
+/* =========================================================
+   APP MAIN / VIEWS
+   ========================================================= */
+.main{padding:28px 36px;max-width:1500px;margin:0 auto;width:100%;}
+.view{display:none;animation:fade .25s ease;}
+.view.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+.page-head{margin-bottom:22px;}
+.page-title{font-size:22px;font-weight:700;color:var(--gray-900);margin-bottom:4px;letter-spacing:-0.2px;}
+.page-sub{color:var(--gray-500);font-size:13.5px;}
+
+/* Welcome banner */
+.welcome-banner{
+  background:
+    radial-gradient(600px 220px at 100% 0%, rgba(59,130,246,0.25), transparent 50%),
+    linear-gradient(135deg,var(--navy-800),var(--navy-600));
+  color:#fff;
+  border-radius:var(--radius-lg);
+  padding:28px 32px;
+  margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:var(--shadow-md);
+  position:relative;overflow:hidden;
+}
+.welcome-banner h2{font-size:22px;font-weight:700;margin-bottom:6px;}
+.welcome-banner p{color:#cbd5e1;font-size:13.5px;max-width:640px;}
+.welcome-stats{display:flex;gap:28px;}
+.welcome-stat{text-align:right;}
+.welcome-stat .n{font-size:26px;font-weight:700;}
+.welcome-stat .l{font-size:11px;color:#cbd5e1;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* Tile cards */
+.tile-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;}
+.tile{
+  background:#fff;border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);padding:22px;
+  transition:transform .15s, box-shadow .15s, border-color .15s;
+  cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.tile:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--blue-400);}
+.tile .ico-wrap{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:14px;
+}
+.tile.t1 .ico-wrap{background:var(--blue-50);color:var(--blue-500);}
+.tile.t2 .ico-wrap{background:var(--red-50);color:var(--red-600);}
+.tile.t3 .ico-wrap{background:var(--amber-50);color:var(--amber-600);}
+.tile.t4 .ico-wrap{background:var(--green-50);color:var(--green-600);}
+.tile .n{font-size:28px;font-weight:700;color:var(--gray-900);letter-spacing:-0.5px;}
+.tile .l{font-size:13px;color:var(--gray-600);font-weight:500;margin-top:2px;}
+.tile .meta{font-size:11.5px;color:var(--gray-400);margin-top:8px;}
+
+/* Content cards grid */
+.content-grid{
+  display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;
+}
+.content-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+
+.card{
+  background:#fff;border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+}
+.card-head{
+  padding:16px 20px;
+  border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-head h3{font-size:14px;font-weight:600;color:var(--gray-900);}
+.card-head .sub{font-size:12px;color:var(--gray-500);}
+.card-body{padding:8px 0;}
+.card-body.pad{padding:16px 20px;}
+
+/* Document rows */
+.doc-list{display:flex;flex-direction:column;}
+.doc-row{
+  padding:12px 20px;
+  display:flex;align-items:center;gap:14px;
+  border-bottom:1px solid var(--gray-100);
+  cursor:pointer;
+  transition:background .15s;
+}
+.doc-row:hover{background:var(--gray-50);}
+.doc-row:last-child{border-bottom:none;}
+.doc-ico{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--blue-50);color:var(--blue-500);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.doc-meta{flex:1;min-width:0;}
+.doc-title{font-weight:600;font-size:13px;color:var(--gray-900);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.doc-sub{font-size:12px;color:var(--gray-500);}
+.doc-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+/* Badges */
+.badge{
+  display:inline-flex;align-items:center;
+  padding:3px 8px;border-radius:999px;
+  font-size:10.5px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.4px;
+  white-space:nowrap;
+}
+.badge-approved{background:var(--green-50);color:var(--green-600);}
+.badge-draft{background:var(--amber-50);color:var(--amber-600);}
+.badge-obsolete{background:var(--red-50);color:var(--red-600);}
+.badge-current{background:var(--blue-50);color:var(--blue-500);}
+.badge-superseded{background:var(--gray-100);color:var(--gray-600);}
+.badge-lang{background:#e0e7ff;color:#4f46e5;}
+
+/* Star icon */
+.star{
+  color:var(--gray-300);font-size:16px;cursor:pointer;
+  transition:color .15s, transform .15s;
+  padding:4px;
+}
+.star:hover{color:var(--amber-600);}
+.star.on{color:var(--amber-600);}
+
+/* Search bar */
+.search-wrap{position:relative;margin-bottom:10px;padding:10px 16px;}
+.search-wrap input{
+  width:100%;padding:9px 12px 9px 36px;
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-md);
+  font-size:13px;background:var(--gray-50);
+  transition:background .15s, border-color .15s;
+}
+.search-wrap input:focus{background:#fff;border-color:var(--blue-400);outline:none;box-shadow:0 0 0 3px rgba(59,130,246,0.12);}
+.search-wrap .search-ico{position:absolute;left:28px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:14px;}
+
+/* Acknowledgment row */
+.ack-row{
+  padding:12px 20px;
+  border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;gap:12px;
+}
+.ack-row:last-child{border-bottom:none;}
+.ack-ico{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--green-50);color:var(--green-600);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+}
+.ack-meta{flex:1;}
+.ack-title{font-size:13px;font-weight:500;color:var(--gray-800);}
+.ack-sub{font-size:11.5px;color:var(--gray-500);}
+
+/* Machine cards */
+.machine-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:18px;margin-top:18px;
+}
+.machine-card{
+  background:#fff;border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  transition:transform .15s, box-shadow .15s, border-color .15s;
+  cursor:pointer;
+}
+.machine-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--blue-400);}
+.machine-img{
+  height:120px;
+  background:linear-gradient(135deg,#cbd5e1,#94a3b8);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:36px;font-weight:700;position:relative;
+}
+.machine-img.blue{background:linear-gradient(135deg,#3b82f6,#1d4789);}
+.machine-img.teal{background:linear-gradient(135deg,#14b8a6,#0f766e);}
+.machine-img.purple{background:linear-gradient(135deg,#8b5cf6,#6d28d9);}
+.machine-img.orange{background:linear-gradient(135deg,#f97316,#c2410c);}
+.machine-img.green{background:linear-gradient(135deg,#22c55e,#15803d);}
+.machine-body{padding:14px 16px;}
+.machine-name{font-weight:600;font-size:14px;color:var(--gray-900);margin-bottom:2px;}
+.machine-area{font-size:12px;color:var(--gray-500);}
+.machine-foot{
+  padding:10px 16px;border-top:1px solid var(--gray-100);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--gray-600);
+}
+
+/* Filter chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.chip{
+  padding:6px 12px;background:#fff;border:1px solid var(--gray-200);
+  border-radius:999px;font-size:12px;color:var(--gray-600);
+  cursor:pointer;transition:all .15s;font-weight:500;
+}
+.chip:hover{border-color:var(--blue-400);color:var(--blue-500);}
+.chip.active{background:var(--navy-700);color:#fff;border-color:var(--navy-700);}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
+.kpi{
+  background:#fff;border:1px solid var(--gray-200);
+  border-radius:var(--radius-md);padding:16px;
+}
+.kpi .l{font-size:11.5px;color:var(--gray-500);text-transform:uppercase;font-weight:600;letter-spacing:0.4px;}
+.kpi .n{font-size:24px;font-weight:700;color:var(--gray-900);margin-top:4px;}
+.kpi .d{font-size:12px;color:var(--green-600);margin-top:2px;font-weight:500;}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--gray-200);margin-bottom:18px;}
+.tab{
+  padding:10px 16px;font-size:13px;color:var(--gray-500);font-weight:500;
+  border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;
+  transition:color .15s, border-color .15s;
+}
+.tab:hover{color:var(--gray-700);}
+.tab.active{color:var(--blue-500);border-bottom-color:var(--blue-500);}
+
+/* Breadcrumb */
+.crumbs{
+  display:flex;align-items:center;gap:8px;font-size:12.5px;
+  color:var(--gray-500);margin-bottom:12px;
+}
+.crumbs a{cursor:pointer;color:var(--blue-500);}
+.crumbs a:hover{text-decoration:underline;}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 14px;border-radius:var(--radius-md);
+  font-size:13px;font-weight:500;
+  transition:all .15s;border:1px solid transparent;
+}
+.btn-p{background:var(--blue-500);color:#fff;}
+.btn-p:hover{background:var(--blue-400);box-shadow:0 4px 10px rgba(37,99,235,0.25);}
+.btn-s{background:#fff;color:var(--gray-700);border-color:var(--gray-200);}
+.btn-s:hover{background:var(--gray-50);border-color:var(--gray-300);}
+.btn-ghost{color:var(--gray-600);}
+.btn-ghost:hover{background:var(--gray-100);}
+.btn-danger{background:var(--red-600);color:#fff;}
+
+/* Document viewer */
+.viewer-grid{display:grid;grid-template-columns:2.2fr 1fr;gap:18px;}
+.viewer-paper{
+  background:#fff;border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  min-height:600px;padding:0;overflow:hidden;
+}
+.viewer-head{
+  padding:20px 24px;border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+}
+.viewer-title{font-size:18px;font-weight:700;color:var(--gray-900);margin-bottom:6px;}
+.viewer-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.viewer-metatext{font-size:12px;color:var(--gray-500);}
+.viewer-page{
+  padding:40px 60px;background:#fcfcfd;
+  min-height:500px;
+  font-family:Georgia,serif;
+  color:var(--gray-800);line-height:1.75;
+}
+.viewer-page h1{font-size:22px;margin-bottom:12px;}
+.viewer-page h2{font-size:16px;margin:18px 0 8px;color:var(--gray-900);}
+.viewer-page p{margin-bottom:12px;font-size:14px;}
+.viewer-page ol{padding-left:22px;margin-bottom:12px;}
+.viewer-page li{margin-bottom:6px;font-size:14px;}
+.viewer-notice{
+  background:var(--amber-50);border-left:3px solid var(--amber-600);
+  padding:10px 14px;margin:12px 0;font-size:13px;color:var(--gray-700);font-family:var(--font);
+}
+
+.viewer-side{display:flex;flex-direction:column;gap:18px;}
+.side-actions{display:flex;flex-direction:column;gap:8px;}
+.side-actions .btn{justify-content:center;width:100%;}
+
+/* Revision history */
+.rev-item{
+  padding:12px 16px;border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;gap:12px;
+}
+.rev-item:last-child{border-bottom:none;}
+.rev-dot{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--gray-100);color:var(--gray-500);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;
+}
+.rev-dot.current{background:var(--blue-500);color:#fff;}
+.rev-meta{flex:1;}
+.rev-title{font-size:12.5px;color:var(--gray-800);font-weight:500;}
+.rev-sub{font-size:11px;color:var(--gray-500);}
+
+/* Library table */
+.lib-toolbar{
+  display:flex;align-items:center;gap:10px;
+  background:#fff;padding:14px 18px;border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);margin-bottom:16px;flex-wrap:wrap;
+}
+.lib-toolbar .form-control{padding:8px 12px;font-size:13px;min-width:140px;}
+.lib-toolbar input[type="search"]{flex:1;min-width:200px;}
+
+.table{width:100%;border-collapse:collapse;}
+.table th,.table td{text-align:left;padding:12px 16px;font-size:13px;}
+.table th{background:var(--gray-50);color:var(--gray-500);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;border-bottom:1px solid var(--gray-200);}
+.table tr{border-bottom:1px solid var(--gray-100);transition:background .15s;cursor:pointer;}
+.table tr:hover{background:var(--blue-50);}
+.table tr:last-child{border-bottom:none;}
+.table td{color:var(--gray-700);vertical-align:middle;}
+.table td.title{font-weight:600;color:var(--gray-900);}
+
+/* Audit trail timeline */
+.audit-item{
+  padding:14px 20px;border-bottom:1px solid var(--gray-100);
+  display:flex;gap:14px;align-items:flex-start;
+}
+.audit-item:last-child{border-bottom:none;}
+.audit-ico{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:13px;
+}
+.audit-ico.blue{background:var(--blue-50);color:var(--blue-500);}
+.audit-ico.green{background:var(--green-50);color:var(--green-600);}
+.audit-ico.amber{background:var(--amber-50);color:var(--amber-600);}
+.audit-ico.red{background:var(--red-50);color:var(--red-600);}
+.audit-ico.gray{background:var(--gray-100);color:var(--gray-600);}
+.audit-meta{flex:1;}
+.audit-line{font-size:13px;color:var(--gray-800);}
+.audit-line strong{font-weight:600;color:var(--gray-900);}
+.audit-sub{font-size:11.5px;color:var(--gray-500);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;}
+.audit-time{font-size:11.5px;color:var(--gray-400);white-space:nowrap;}
+
+/* Training cards */
+.training-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
+.training-card{
+  background:#fff;border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);padding:18px;
+}
+.training-card.overdue{border-color:#fca5a5;background:linear-gradient(180deg,#fff, #fff5f5);}
+.progress{
+  height:6px;background:var(--gray-100);border-radius:999px;overflow:hidden;margin-top:10px;
+}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--blue-500),#3b82f6);border-radius:999px;}
+
+/* Admin upload */
+.dropzone{
+  border:2px dashed var(--gray-300);
+  border-radius:var(--radius-lg);padding:40px;
+  text-align:center;color:var(--gray-500);
+  background:var(--gray-50);
+  transition:border-color .15s,background .15s;
+  cursor:pointer;margin-bottom:20px;
+}
+.dropzone:hover{border-color:var(--blue-400);background:var(--blue-50);}
+.dropzone .ico{font-size:32px;margin-bottom:10px;}
+.dropzone h4{color:var(--gray-800);font-size:15px;margin-bottom:4px;}
+
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.form-grid .full{grid-column:1/-1;}
+.form-grid label{font-size:12px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px;}
+
+/* Toggle switch */
+.switch{display:flex;align-items:center;gap:10px;padding:10px 0;}
+.switch-track{
+  width:36px;height:20px;background:var(--gray-300);border-radius:999px;
+  position:relative;cursor:pointer;transition:background .15s;
+}
+.switch-dot{
+  position:absolute;top:2px;left:2px;width:16px;height:16px;
+  background:#fff;border-radius:50%;transition:left .15s;box-shadow:var(--shadow-sm);
+}
+.switch.on .switch-track{background:var(--blue-500);}
+.switch.on .switch-dot{left:18px;}
+.switch-label{font-size:13px;color:var(--gray-700);}
+
+/* Empty state */
+.empty{padding:40px 20px;text-align:center;color:var(--gray-500);}
+.empty .ico{font-size:36px;margin-bottom:10px;color:var(--gray-300);}
+
+/* Responsive */
+@media (max-width:1200px){
+  .tile-grid{grid-template-columns:repeat(2,1fr);}
+  .content-grid{grid-template-columns:1fr;}
+  .viewer-grid{grid-template-columns:1fr;}
+  .kpi-row{grid-template-columns:repeat(3,1fr);}
+  .form-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:860px){
+  .login-side{display:none;}
+  .login-panel{padding:40px 24px;}
+  .topnav{padding:0 14px;}
+  .topnav-links{display:none;}
+  .topnav-brand{min-width:auto;}
+  .main{padding:18px 14px;}
+  .welcome-banner{flex-direction:column;align-items:flex-start;gap:16px;}
+  .welcome-stats{gap:18px;}
+  .welcome-stat{text-align:left;}
+  .tile-grid{grid-template-columns:1fr 1fr;}
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .form-grid{grid-template-columns:1fr;}
+  .content-grid-2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     LOGIN SCREEN
+========================================================= -->
+<section id="loginScreen">
+  <aside class="login-side">
+    <div class="login-brand">
+      <div class="login-brand-mark">M</div>
+      <div>
+        <div style="font-weight:700;font-size:14px;color:#fff;" data-i18n="brandName">SouthWest Region</div>
+        <div class="login-brand-name" data-i18n="brandTag">Operational Excellence</div>
+      </div>
+    </div>
+    <div class="login-hero">
+      <h1 data-i18n="loginHeroTitle">Machine Document Control Portal</h1>
+      <p data-i18n="loginHeroSub">Secure, plant-specific access to controlled machine documentation, standard work, preventive maintenance, safety and quality records across the regional manufacturing network.</p>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="ico">&#128195;</div>
+          <h4 data-i18n="feat1">Controlled Documents</h4>
+          <p data-i18n="feat1d">Approved SOPs, PMs, safety, quality and training records.</p>
+        </div>
+        <div class="feature-item">
+          <div class="ico">&#127970;</div>
+          <h4 data-i18n="feat2">Plant-Based Access</h4>
+          <p data-i18n="feat2d">Users only see documents for their permitted facilities.</p>
+        </div>
+        <div class="feature-item">
+          <div class="ico">&#128260;</div>
+          <h4 data-i18n="feat3">Revision Control</h4>
+          <p data-i18n="feat3d">Tracked revisions with approved, draft and obsolete states.</p>
+        </div>
+        <div class="feature-item">
+          <div class="ico">&#128274;</div>
+          <h4 data-i18n="feat4">Secure Login</h4>
+          <p data-i18n="feat4d">Role-based authentication with auditable activity trails.</p>
+        </div>
+      </div>
+    </div>
+    <div class="login-footer-note">&copy; 2026 SouthWest Region Operations &bull; Internal Use Only</div>
+  </aside>
+
+  <div class="login-panel">
+    <div class="login-card">
+      <h2 data-i18n="signIn">Sign in to your account</h2>
+      <p class="muted" data-i18n="signInSub">Use your enterprise credentials to continue</p>
+      <div class="form-group">
+        <label data-i18n="emailLabel">Email or Username</label>
+        <input type="text" class="form-control" id="loginUser" placeholder="you@company.com" value="john.m@supplyone.com" />
+      </div>
+      <div class="form-group">
+        <label data-i18n="passLabel">Password</label>
+        <input type="password" class="form-control" id="loginPass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" value="demo" />
+      </div>
+      <div class="row-between">
+        <label class="checkbox"><input type="checkbox" checked /> <span data-i18n="remember">Remember me on this device</span></label>
+        <a class="link-text" data-i18n="forgot">Forgot password?</a>
+      </div>
+      <button class="btn-primary" onclick="doLogin()" data-i18n="signInBtn">Sign in securely</button>
+      <div class="divider" data-i18n="orDemo">Or continue as demo user</div>
+      <div class="demo-grid" id="demoUserGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     APP SHELL
+========================================================= -->
+<div id="appShell">
+
+  <!-- Top Navigation -->
+  <header class="topnav">
+    <div class="topnav-brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-title">
+        <span data-i18n="appTitle">Machine Document Control Portal</span>
+        <span class="sub" data-i18n="appTag">SouthWest Region Operations</span>
+      </div>
+    </div>
+    <nav class="topnav-links" id="navLinks"></nav>
+    <div class="topnav-right">
+      <button class="topnav-icon" title="Search">&#128269;</button>
+      <div class="lang-toggle">
+        <button id="langEn" class="active" onclick="setLang('en')">EN</button>
+        <button id="langEs" onclick="setLang('es')">ES</button>
+      </div>
+      <button class="topnav-icon" title="Notifications">&#128276;</button>
+      <div class="user-chip" onclick="toggleUserMenu(event)">
+        <div class="avatar" id="userAvatar">J</div>
+        <div class="info">
+          <div class="n" id="userName">John M.</div>
+          <div class="r" id="userRole">Plant Manager</div>
+        </div>
+      </div>
+    </div>
+    <div class="user-menu" id="userMenu">
+      <div class="user-menu-head">
+        <div class="t" data-i18n="switchUser">Switch demo user</div>
+      </div>
+      <div id="userMenuList"></div>
+      <div class="user-menu-item" onclick="logout()" style="color:var(--red-600);">
+        <div class="avatar" style="background:var(--red-50);color:var(--red-600);">&#9211;</div>
+        <div><div class="n" data-i18n="signOut">Sign out</div><div class="r" data-i18n="endSession">End secure session</div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div id="homeView" class="view active"></div>
+    <div id="plantView" class="view"></div>
+    <div id="machineView" class="view"></div>
+    <div id="viewerView" class="view"></div>
+    <div id="libraryView" class="view"></div>
+    <div id="trainingView" class="view"></div>
+    <div id="auditView" class="view"></div>
+    <div id="adminView" class="view"></div>
+  </main>
+</div>
+
+<script>
+/* =========================================================
+   I18N STRINGS
+========================================================= */
+const I18N = {
+  en: {
+    brandName:"SouthWest Region", brandTag:"Operational Excellence",
+    loginHeroTitle:"Machine Document Control Portal",
+    loginHeroSub:"Secure, plant-specific access to controlled machine documentation, standard work, preventive maintenance, safety and quality records across the regional manufacturing network.",
+    feat1:"Controlled Documents", feat1d:"Approved SOPs, PMs, safety, quality and training records.",
+    feat2:"Plant-Based Access", feat2d:"Users only see documents for their permitted facilities.",
+    feat3:"Revision Control", feat3d:"Tracked revisions with approved, draft and obsolete states.",
+    feat4:"Secure Login", feat4d:"Role-based authentication with auditable activity trails.",
+    signIn:"Sign in to your account", signInSub:"Use your enterprise credentials to continue",
+    emailLabel:"Email or Username", passLabel:"Password", remember:"Remember me on this device",
+    forgot:"Forgot password?", signInBtn:"Sign in securely", orDemo:"Or continue as demo user",
+    appTitle:"Machine Document Control Portal", appTag:"SouthWest Region Operations",
+    switchUser:"Switch demo user", signOut:"Sign out", endSession:"End secure session",
+    nav_home:"Home", nav_plant:"My Plant", nav_docs:"Documents", nav_training:"Training",
+    nav_audit:"Audit Trail", nav_help:"Help", nav_admin:"Admin",
+    welcome:"Welcome back", welcomeSub:"Your controlled documents, training and activity for",
+    kpi_machines:"My Machines", kpi_sop:"SOPs & Safety", kpi_recent:"Recent Updates", kpi_docs:"Documents",
+    latestDocs:"Latest Documents", favMachines:"Favorite Machines", recentViewed:"Recently Viewed",
+    recentAcks:"Recent Acknowledgments", recentRev:"Recent Revisions",
+    searchDocs:"Search documents...",
+    plantOverview:"Plant Overview", plantSub:"Machines, departments and documentation overview",
+    machines:"Machines", sopCount:"SOPs", safetyCount:"Safety", pmCount:"PM Tasks", trainingCount:"Training",
+    allDepts:"All Areas", open:"Open", viewDocs:"View Documents",
+    tab_sops:"SOPs", tab_safety:"Safety", tab_pm:"PM Tasks", tab_training:"Training", tab_ts:"Troubleshooting", tab_quality:"Quality",
+    favorite:"Favorite", download:"Download", print:"Print", acknowledge:"Acknowledge",
+    acknowledged:"Acknowledged", ackPrompt:"I have read and understood this document",
+    revHistory:"Revision History", relatedDocs:"Related Documents",
+    library:"Documents Library", librarySub:"All controlled documents visible to your account",
+    filterPlant:"Plant", filterMachine:"Machine", filterType:"Type", filterStatus:"Status",
+    filterLang:"Language", filterRev:"Revision", filterFav:"Favorites only",
+    sortBy:"Sort:", sortNew:"Newest", sortRev:"Revision", sortTitle:"Title", sortRecent:"Recently viewed",
+    training:"Training", trainingSub:"Required reading and acknowledgments assigned to you",
+    completion:"Completion", overdue:"Overdue", dueIn:"Due in", days:"days",
+    audit:"Audit Trail", auditSub:"System activity and traceability log",
+    dateRange:"Date", allUsers:"All users", allPlants:"All plants", allEvents:"All events", allObjects:"All objects",
+    admin:"Admin", adminSub:"Upload, manage and revise controlled documents",
+    uploadDoc:"Upload Document", dragDrop:"Drag and drop files here or click to browse",
+    saveDoc:"Save Document", docTable:"Document Management", editMeta:"Edit", newRev:"New Revision",
+    markObsolete:"Mark Obsolete", approve:"Approve",
+    readRequired:"Read required", trainingRequired:"Training required",
+    col_title:"Title", col_plant:"Plant", col_machine:"Machine", col_type:"Type",
+    col_rev:"Rev", col_status:"Status", col_lang:"Lang", col_effective:"Effective", col_owner:"Owner", col_actions:"Actions",
+    viewing:"Viewing document", effective:"Effective", owner:"Owner", approver:"Approver", docId:"Document ID",
+    revision:"Revision", language:"Language", status:"Status",
+    backTo:"Back to"
+  },
+  es:{
+    brandName:"Región SouthWest", brandTag:"Excelencia Operativa",
+    loginHeroTitle:"Portal de Control de Documentos de Máquinas",
+    loginHeroSub:"Acceso seguro y específico por planta a documentación controlada de máquinas, trabajo estándar, mantenimiento preventivo, seguridad y calidad en la red regional.",
+    feat1:"Documentos Controlados", feat1d:"SOPs, PMs, seguridad, calidad y entrenamiento aprobados.",
+    feat2:"Acceso por Planta", feat2d:"Los usuarios ven solo documentos de sus plantas asignadas.",
+    feat3:"Control de Revisión", feat3d:"Revisiones rastreadas: aprobado, borrador y obsoleto.",
+    feat4:"Inicio Seguro", feat4d:"Autenticación por rol con registros de auditoría.",
+    signIn:"Inicie sesión en su cuenta", signInSub:"Use sus credenciales empresariales para continuar",
+    emailLabel:"Correo o Usuario", passLabel:"Contraseña", remember:"Recordarme en este dispositivo",
+    forgot:"¿Olvidó su contraseña?", signInBtn:"Iniciar sesión", orDemo:"O continuar como usuario demo",
+    appTitle:"Portal de Control de Documentos", appTag:"Operaciones Región SouthWest",
+    switchUser:"Cambiar usuario demo", signOut:"Cerrar sesión", endSession:"Finalizar sesión segura",
+    nav_home:"Inicio", nav_plant:"Mi Planta", nav_docs:"Documentos", nav_training:"Capacitación",
+    nav_audit:"Auditoría", nav_help:"Ayuda", nav_admin:"Administración",
+    welcome:"Bienvenido de nuevo", welcomeSub:"Sus documentos, capacitación y actividad para",
+    kpi_machines:"Mis Máquinas", kpi_sop:"SOPs y Seguridad", kpi_recent:"Actualizaciones", kpi_docs:"Documentos",
+    latestDocs:"Documentos Recientes", favMachines:"Máquinas Favoritas", recentViewed:"Vistos Recientemente",
+    recentAcks:"Reconocimientos Recientes", recentRev:"Revisiones Recientes",
+    searchDocs:"Buscar documentos...",
+    plantOverview:"Resumen de Planta", plantSub:"Máquinas, áreas y documentación",
+    machines:"Máquinas", sopCount:"SOPs", safetyCount:"Seguridad", pmCount:"Tareas PM", trainingCount:"Capacitación",
+    allDepts:"Todas las Áreas", open:"Abrir", viewDocs:"Ver Documentos",
+    tab_sops:"SOPs", tab_safety:"Seguridad", tab_pm:"Tareas PM", tab_training:"Capacitación", tab_ts:"Diagnóstico", tab_quality:"Calidad",
+    favorite:"Favorito", download:"Descargar", print:"Imprimir", acknowledge:"Reconocer",
+    acknowledged:"Reconocido", ackPrompt:"He leído y comprendido este documento",
+    revHistory:"Historial de Revisiones", relatedDocs:"Documentos Relacionados",
+    library:"Biblioteca de Documentos", librarySub:"Todos los documentos controlados visibles para usted",
+    filterPlant:"Planta", filterMachine:"Máquina", filterType:"Tipo", filterStatus:"Estado",
+    filterLang:"Idioma", filterRev:"Revisión", filterFav:"Solo favoritos",
+    sortBy:"Orden:", sortNew:"Más recientes", sortRev:"Revisión", sortTitle:"Título", sortRecent:"Vistos",
+    training:"Capacitación", trainingSub:"Lecturas obligatorias y reconocimientos asignados",
+    completion:"Completado", overdue:"Atrasado", dueIn:"Vence en", days:"días",
+    audit:"Registro de Auditoría", auditSub:"Actividad del sistema y trazabilidad",
+    dateRange:"Fecha", allUsers:"Todos los usuarios", allPlants:"Todas las plantas", allEvents:"Todos los eventos", allObjects:"Todos los objetos",
+    admin:"Administración", adminSub:"Cargar, gestionar y revisar documentos controlados",
+    uploadDoc:"Cargar Documento", dragDrop:"Arrastre archivos aquí o haga clic para seleccionar",
+    saveDoc:"Guardar Documento", docTable:"Gestión de Documentos", editMeta:"Editar", newRev:"Nueva Revisión",
+    markObsolete:"Marcar Obsoleto", approve:"Aprobar",
+    readRequired:"Lectura obligatoria", trainingRequired:"Capacitación obligatoria",
+    col_title:"Título", col_plant:"Planta", col_machine:"Máquina", col_type:"Tipo",
+    col_rev:"Rev", col_status:"Estado", col_lang:"Idioma", col_effective:"Vigente", col_owner:"Responsable", col_actions:"Acciones",
+    viewing:"Viendo documento", effective:"Vigente", owner:"Responsable", approver:"Aprobador", docId:"ID del documento",
+    revision:"Revisión", language:"Idioma", status:"Estado",
+    backTo:"Volver a"
+  }
+};
+
+/* =========================================================
+   MOCK DATA (Supabase-ready schema thinking)
+========================================================= */
+// plants table
+const plants = [
+  { id:"okc", name:"Oklahoma City", code:"OKC", region:"SWR", address:"Oklahoma City, OK" },
+  { id:"dal", name:"Dallas",        code:"DAL", region:"SWR", address:"Dallas, TX" },
+  { id:"ark", name:"Arkansas",      code:"ARK", region:"SWR", address:"Little Rock, AR" },
+  { id:"wis", name:"Wisconsin",     code:"JKW", region:"NR",  address:"Jackson, WI" },
+  { id:"chi", name:"Chicago",       code:"CHI", region:"NR",  address:"Chicago, IL" }
+];
+
+// roles table
+const roles = {
+  corp_admin:    { label:"Corporate Admin",     canAdmin:true,  allPlants:true  },
+  regional:      { label:"Regional Leader",     canAdmin:false, allPlants:false },
+  plant_manager: { label:"Plant Manager",       canAdmin:true,  allPlants:false },
+  supervisor:    { label:"Supervisor",          canAdmin:false, allPlants:false },
+  operator:      { label:"Operator / Viewer",   canAdmin:false, allPlants:false },
+  maintenance:   { label:"Maintenance Tech",    canAdmin:false, allPlants:false }
+};
+
+// profiles + user_plant_access combined for the mock
+const users = [
+  { id:"u1", name:"John M.",  email:"john.m@supplyone.com",  role:"plant_manager", plants:["okc"],             initials:"JM" },
+  { id:"u2", name:"Sarah D.", email:"sarah.d@supplyone.com", role:"supervisor",    plants:["dal"],             initials:"SD" },
+  { id:"u3", name:"Mike R.",  email:"mike.r@supplyone.com",  role:"operator",      plants:["ark"],             initials:"MR" },
+  { id:"u4", name:"Kelly T.", email:"kelly.t@supplyone.com", role:"corp_admin",    plants:["okc","dal","ark","wis","chi"], initials:"KT" },
+  { id:"u5", name:"Luis G.",  email:"luis.g@supplyone.com",  role:"regional",      plants:["okc","dal","ark"], initials:"LG" },
+  { id:"u6", name:"Ana V.",   email:"ana.v@supplyone.com",   role:"maintenance",   plants:["wis"],             initials:"AV" }
+];
+
+// machines table
+const machines = [
+  { id:"m1",  plant:"okc", name:"Bagging Line 3",       area:"Bagging",     img:"blue"   },
+  { id:"m2",  plant:"okc", name:"Mixer 4500",           area:"Mixing",      img:"teal"   },
+  { id:"m3",  plant:"okc", name:"APSTAR 1628",          area:"Finishing",   img:"orange" },
+  { id:"m4",  plant:"dal", name:"Extruder A1",          area:"Extrusion",   img:"purple" },
+  { id:"m5",  plant:"dal", name:"Labeler 210",          area:"Packaging",   img:"green"  },
+  { id:"m6",  plant:"ark", name:"Mixer 4500",           area:"Mixing",      img:"teal"   },
+  { id:"m7",  plant:"ark", name:"Bagging Line 3",       area:"Bagging",     img:"blue"   },
+  { id:"m8",  plant:"wis", name:"Serenco FFG 50x110",   area:"Flexo",       img:"orange" },
+  { id:"m9",  plant:"wis", name:"Extruder A1",          area:"Extrusion",   img:"purple" },
+  { id:"m10", plant:"chi", name:"Labeler 210",          area:"Packaging",   img:"green"  },
+  { id:"m11", plant:"chi", name:"APSTAR 1628",          area:"Finishing",   img:"orange" }
+];
+
+// documents table + embedded revisions
+const docCategories = ["SOP","Safety","PM","Training","Troubleshooting","Quality"];
+let docSeq = 1000;
+function D(plantId,machineId,title,cat,rev,status,lang,owner,approver,readReq,trainReq,revState="Current"){
+  return {
+    id:"DOC-"+(++docSeq),
+    plant:plantId, machine:machineId,
+    title, category:cat,
+    revision:rev, revState, status, language:lang,
+    effective:"2026-0"+(Math.floor(Math.random()*9)+1)+"-15",
+    owner, approver, readRequired:readReq, trainingRequired:trainReq,
+    revisions:[
+      { rev, status, date:"2026-02-15", author:owner, state:"Current" },
+      { rev:"Rev "+(parseInt(rev.split(" ")[1])-1||1), status:"Approved", date:"2025-09-01", author:owner, state:"Superseded" },
+      { rev:"Rev 1", status:"Approved", date:"2024-11-01", author:owner, state:"Obsolete" }
+    ]
+  };
+}
+
+const documents = [
+  // OKC
+  D("okc","m1","Extruder Setup Procedure","SOP","Rev 3","Approved","English","J. Martinez","K. Torres",true,true),
+  D("okc","m1","LOTO Instructions","Safety","Rev 2","Approved","Bilingual","EHS Team","K. Torres",true,true),
+  D("okc","m1","Weekly PM Checklist","PM","Rev 4","Approved","English","Maintenance","J. Martinez",false,false),
+  D("okc","m2","Mixer Startup Procedure","SOP","Rev 2","Approved","Spanish","J. Martinez","K. Torres",true,true),
+  D("okc","m2","Calibration Guide","Quality","Rev 1","Draft","English","QA","K. Torres",false,false,"Draft"),
+  D("okc","m3","Operator Standard Work","Training","Rev 3","Approved","Bilingual","Training","J. Martinez",true,true),
+  D("okc","m3","Emergency Stop Procedure","Safety","Rev 2","Approved","Bilingual","EHS Team","K. Torres",true,true),
+  D("okc","m1","Preventive Maintenance Inspection","PM","Rev 5","Approved","English","Maintenance","J. Martinez",false,false),
+  D("okc","m2","Troubleshooting Guide","Troubleshooting","Rev 1","Approved","English","Maintenance","J. Martinez",false,false),
+  D("okc","m3","Quality Inspection Checklist","Quality","Rev 2","Approved","Bilingual","QA","K. Torres",true,false),
+  // DAL
+  D("dal","m4","Extruder Setup Procedure","SOP","Rev 2","Approved","English","S. Diaz","R. Chen",true,true),
+  D("dal","m4","LOTO Instructions","Safety","Rev 3","Approved","Bilingual","EHS Team","R. Chen",true,true),
+  D("dal","m5","Operator Standard Work","Training","Rev 2","Approved","Bilingual","Training","S. Diaz",true,true),
+  D("dal","m5","Troubleshooting Guide","Troubleshooting","Rev 1","Draft","English","Maintenance","S. Diaz",false,false,"Draft"),
+  D("dal","m4","Weekly PM Checklist","PM","Rev 3","Approved","English","Maintenance","S. Diaz",false,false),
+  // ARK
+  D("ark","m6","Mixer Startup Procedure","SOP","Rev 1","Approved","English","M. Rivera","K. Torres",true,true),
+  D("ark","m6","Emergency Stop Procedure","Safety","Rev 2","Approved","Bilingual","EHS Team","K. Torres",true,true),
+  D("ark","m7","Preventive Maintenance Inspection","PM","Rev 2","Approved","English","Maintenance","M. Rivera",false,false),
+  D("ark","m7","Quality Inspection Checklist","Quality","Rev 1","Approved","English","QA","M. Rivera",true,false),
+  // WIS
+  D("wis","m8","Extruder Setup Procedure","SOP","Rev 4","Approved","English","A. Vargas","K. Torres",true,true),
+  D("wis","m8","LOTO Instructions","Safety","Rev 2","Bilingual","Bilingual","EHS Team","K. Torres",true,true),
+  D("wis","m9","Weekly PM Checklist","PM","Rev 3","Approved","English","Maintenance","A. Vargas",false,false),
+  D("wis","m9","Troubleshooting Guide","Troubleshooting","Rev 2","Approved","English","Maintenance","A. Vargas",false,false),
+  D("wis","m8","Calibration Guide","Quality","Rev 2","Approved","English","QA","K. Torres",false,false),
+  // CHI
+  D("chi","m10","Operator Standard Work","Training","Rev 1","Approved","Bilingual","Training","R. Chen",true,true),
+  D("chi","m10","Emergency Stop Procedure","Safety","Rev 1","Approved","English","EHS Team","R. Chen",true,true),
+  D("chi","m11","Quality Inspection Checklist","Quality","Rev 3","Approved","Bilingual","QA","R. Chen",true,false),
+  D("chi","m11","Preventive Maintenance Inspection","PM","Rev 1","Draft","English","Maintenance","R. Chen",false,false,"Draft")
+];
+
+// per-user state: favorites, recently viewed, acknowledgments, audit log
+const userState = {};
+users.forEach(u=>{
+  userState[u.id] = {
+    favMachines:[],
+    favDocs:[],
+    recent:[],
+    acks:[],
+    training:[]
+  };
+});
+
+// seed some state so dashboards are not empty
+userState.u1.favMachines = ["m1","m3"];
+userState.u1.favDocs = [];
+userState.u1.recent = [];
+userState.u1.acks = [];
+userState.u4.favMachines = ["m1","m8"];
+userState.u5.favMachines = ["m4"];
+
+// global audit log
+const auditLog = [
+  // seed with some prior events
+  { id:"a1", ts:"2026-04-17T08:12:00", userId:"u1", user:"John M.",  plant:"okc", action:"login",            objType:"system",   objId:null,        objName:"Session", details:"Signed in from browser", sev:"blue" },
+  { id:"a2", ts:"2026-04-17T08:15:00", userId:"u1", user:"John M.",  plant:"okc", action:"open",             objType:"document", objId:"DOC-1001", objName:"LOTO Instructions", details:"Opened document", sev:"blue" },
+  { id:"a3", ts:"2026-04-17T08:17:00", userId:"u1", user:"John M.",  plant:"okc", action:"acknowledge",      objType:"document", objId:"DOC-1001", objName:"LOTO Instructions", details:"Acknowledged training requirement", sev:"green" },
+  { id:"a4", ts:"2026-04-17T09:02:00", userId:"u4", user:"Kelly T.", plant:"all", action:"upload_revision",  objType:"document", objId:"DOC-1004", objName:"Mixer Startup Procedure", details:"Uploaded Rev 2", sev:"amber" },
+  { id:"a5", ts:"2026-04-17T09:30:00", userId:"u4", user:"Kelly T.", plant:"all", action:"status_change",    objType:"document", objId:"DOC-1005", objName:"Calibration Guide", details:"Set status: Draft", sev:"amber" },
+  { id:"a6", ts:"2026-04-17T10:14:00", userId:"u5", user:"Luis G.",  plant:"okc", action:"favorite",         objType:"machine",  objId:"m4",       objName:"Extruder A1", details:"Added to favorites", sev:"blue" },
+  { id:"a7", ts:"2026-04-17T11:00:00", userId:"u2", user:"Sarah D.", plant:"dal", action:"print",            objType:"document", objId:"DOC-1011", objName:"LOTO Instructions", details:"Sent to printer", sev:"blue" },
+  { id:"a8", ts:"2026-04-17T14:32:00", userId:"u6", user:"Ana V.",   plant:"wis", action:"download",         objType:"document", objId:"DOC-1021", objName:"Troubleshooting Guide", details:"Downloaded PDF", sev:"blue" },
+  { id:"a9", ts:"2026-04-17T15:05:00", userId:"u4", user:"Kelly T.", plant:"all", action:"metadata_edit",    objType:"document", objId:"DOC-1004", objName:"Mixer Startup Procedure", details:"Updated approver", sev:"amber" },
+  { id:"a10", ts:"2026-04-17T16:20:00", userId:"u1", user:"John M.", plant:"okc", action:"language_switch", objType:"system",   objId:null,        objName:"UI Language", details:"Switched to Spanish", sev:"gray" }
+];
+let auditSeq = 100;
+
+/* =========================================================
+   APP STATE
+========================================================= */
+let currentUser = users[0];
+let lang = "en";
+let currentView = "home";
+let currentMachine = null;
+let currentDoc = null;
+
+/* =========================================================
+   HELPERS
+========================================================= */
+const t = (k)=>I18N[lang][k]||k;
+const $ = (s)=>document.querySelector(s);
+const plantName = (id)=>{ const p=plants.find(x=>x.id===id); return p?p.name:id; };
+const machineName = (id)=>{ const m=machines.find(x=>x.id===id); return m?m.name:id; };
+const userPlants = ()=>currentUser.plants;
+const canAdmin = ()=>roles[currentUser.role].canAdmin;
+const isCorpAdmin = ()=>currentUser.role==="corp_admin";
+
+// filtered data for current user
+const visibleMachines = ()=>machines.filter(m=>userPlants().includes(m.plant));
+const visibleDocs = ()=>documents.filter(d=>userPlants().includes(d.plant));
+
+function badge(status){
+  const map={ "Approved":"badge-approved","Draft":"badge-draft","Obsolete":"badge-obsolete","Current":"badge-current","Superseded":"badge-superseded" };
+  return `<span class="badge ${map[status]||'badge-current'}">${status}</span>`;
+}
+function langBadge(l){
+  const short = l==="English"?"EN":l==="Spanish"?"ES":"EN/ES";
+  return `<span class="badge badge-lang">${short}</span>`;
+}
+function formatDate(iso){
+  try{ return new Date(iso).toLocaleDateString(lang==="es"?"es-ES":"en-US",{year:"numeric",month:"short",day:"numeric"}); }catch(e){return iso;}
+}
+function timeAgo(iso){
+  const d=new Date(iso); const diff=(Date.now()-d.getTime())/1000;
+  if(diff<60) return lang==="es"?"hace segundos":"seconds ago";
+  if(diff<3600) return Math.floor(diff/60)+(lang==="es"?" min":"m ago");
+  if(diff<86400) return Math.floor(diff/3600)+(lang==="es"?" h":"h ago");
+  return Math.floor(diff/86400)+(lang==="es"?" días":"d ago");
+}
+
+/* =========================================================
+   AUDIT LOGGING
+========================================================= */
+function logAudit(action,objType,objId,objName,details,sev="blue"){
+  const event = {
+    id:"a"+(++auditSeq),
+    ts:new Date().toISOString(),
+    userId:currentUser.id, user:currentUser.name,
+    plant: currentUser.plants.length===1 ? currentUser.plants[0] : "multi",
+    action, objType, objId, objName, details, sev
+  };
+  auditLog.unshift(event);
+}
+
+/* =========================================================
+   FAVORITES & RECENTLY VIEWED
+========================================================= */
+function toggleFavoriteMachine(mId){
+  const s = userState[currentUser.id];
+  const i = s.favMachines.indexOf(mId);
+  if(i===-1){ s.favMachines.push(mId); logAudit("favorite","machine",mId,machineName(mId),"Added machine to favorites","blue"); }
+  else { s.favMachines.splice(i,1); logAudit("unfavorite","machine",mId,machineName(mId),"Removed from favorites","gray"); }
+}
+function toggleFavoriteDoc(dId){
+  const s = userState[currentUser.id];
+  const i = s.favDocs.indexOf(dId);
+  const d = documents.find(x=>x.id===dId);
+  if(i===-1){ s.favDocs.push(dId); logAudit("favorite","document",dId,d.title,"Added document to favorites","blue"); }
+  else { s.favDocs.splice(i,1); logAudit("unfavorite","document",dId,d.title,"Removed from favorites","gray"); }
+}
+function addRecent(dId){
+  const s = userState[currentUser.id];
+  s.recent = s.recent.filter(x=>x.id!==dId);
+  s.recent.unshift({ id:dId, ts:new Date().toISOString() });
+  if(s.recent.length>10) s.recent.pop();
+}
+function isFavMachine(mId){ return userState[currentUser.id].favMachines.includes(mId); }
+function isFavDoc(dId){ return userState[currentUser.id].favDocs.includes(dId); }
+
+/* =========================================================
+   LOGIN
+========================================================= */
+function renderDemoUsers(){
+  const grid = $("#demoUserGrid"); grid.innerHTML="";
+  users.forEach(u=>{
+    const b = document.createElement("button");
+    b.className="demo-btn";
+    b.innerHTML = `<strong>${u.name}</strong><span>${roles[u.role].label} &middot; ${u.plants.map(plantName).join(", ").slice(0,26)}${u.plants.length>2?"...":""}</span>`;
+    b.onclick = ()=>{ $("#loginUser").value = u.email; doLogin(u.id); };
+    grid.appendChild(b);
+  });
+}
+function doLogin(forceId){
+  const email = $("#loginUser").value.trim().toLowerCase();
+  let u = forceId ? users.find(x=>x.id===forceId) : users.find(x=>x.email.toLowerCase()===email);
+  if(!u) u = users[0];
+  currentUser = u;
+  $("#loginScreen").style.display="none";
+  $("#appShell").style.display="flex";
+  logAudit("login","system",null,"Session","Signed in","green");
+  buildNav();
+  renderUserMenu();
+  updateUserChip();
+  show("home");
+}
+function logout(){
+  logAudit("logout","system",null,"Session","Signed out","gray");
+  $("#appShell").style.display="none";
+  $("#loginScreen").style.display="flex";
+  toggleUserMenu({stopPropagation(){}});
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+function buildNav(){
+  const links = [
+    { id:"home",     i18n:"nav_home",     show:true },
+    { id:"plant",    i18n:"nav_plant",    show:true },
+    { id:"library",  i18n:"nav_docs",     show:true },
+    { id:"training", i18n:"nav_training", show:true },
+    { id:"audit",    i18n:"nav_audit",    show:true },
+    { id:"admin",    i18n:"nav_admin",    show:canAdmin() }
+  ];
+  const nav = $("#navLinks"); nav.innerHTML="";
+  links.filter(l=>l.show).forEach(l=>{
+    const a = document.createElement("a");
+    a.className="topnav-link"+(currentView===l.id?" active":"");
+    a.textContent = t(l.i18n);
+    a.onclick = ()=>show(l.id);
+    a.dataset.view = l.id;
+    nav.appendChild(a);
+  });
+}
+function show(view, ctx){
+  currentView = view;
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".topnav-link").forEach(l=>l.classList.toggle("active", l.dataset.view===view));
+  const root = $("#"+view+"View");
+  if(!root) return;
+  root.classList.add("active");
+  if(view==="home") renderHome();
+  if(view==="plant") renderPlant();
+  if(view==="machine") renderMachine();
+  if(view==="viewer") renderViewer();
+  if(view==="library") renderLibrary();
+  if(view==="training") renderTraining();
+  if(view==="audit") renderAudit();
+  if(view==="admin") renderAdmin();
+}
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+function setLang(l){
+  lang = l;
+  $("#langEn").classList.toggle("active", l==="en");
+  $("#langEs").classList.toggle("active", l==="es");
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.dataset.i18n;
+    if(I18N[l][k]) el.textContent = I18N[l][k];
+  });
+  logAudit("language_switch","system",null,"UI Language","Switched to "+(l==="en"?"English":"Spanish"),"gray");
+  buildNav();
+  show(currentView);
+}
+
+/* =========================================================
+   USER MENU
+========================================================= */
+function toggleUserMenu(e){
+  if(e && e.stopPropagation) e.stopPropagation();
+  $("#userMenu").classList.toggle("open");
+}
+document.addEventListener("click",(e)=>{
+  if(!e.target.closest(".user-chip") && !e.target.closest(".user-menu")){
+    $("#userMenu").classList.remove("open");
+  }
+});
+function renderUserMenu(){
+  const list = $("#userMenuList"); list.innerHTML="";
+  users.forEach(u=>{
+    const row = document.createElement("div");
+    row.className="user-menu-item";
+    row.innerHTML = `
+      <div class="avatar">${u.initials}</div>
+      <div style="flex:1;">
+        <div class="n">${u.name}</div>
+        <div class="r">${roles[u.role].label} &middot; ${u.plants.length===plants.length?"All Plants":u.plants.map(plantName).join(", ")}</div>
+      </div>
+      ${u.id===currentUser.id?'<span class="badge badge-current">Active</span>':''}
+    `;
+    row.onclick = ()=>switchUser(u.id);
+    list.appendChild(row);
+  });
+}
+function switchUser(uId){
+  const u = users.find(x=>x.id===uId);
+  currentUser = u;
+  logAudit("login","system",null,"Session","Switched demo user","blue");
+  updateUserChip();
+  renderUserMenu();
+  buildNav();
+  $("#userMenu").classList.remove("open");
+  show("home");
+}
+function updateUserChip(){
+  $("#userAvatar").textContent = currentUser.initials;
+  $("#userName").textContent = currentUser.name;
+  $("#userRole").textContent = roles[currentUser.role].label;
+}
+
+/* =========================================================
+   VIEW: HOME DASHBOARD
+========================================================= */
+function renderHome(){
+  const pName = currentUser.plants.length===plants.length ? "All Plants" : currentUser.plants.map(plantName).join(", ");
+  const docs = visibleDocs();
+  const userMachines = visibleMachines();
+  const latestDocs = [...docs].sort((a,b)=>b.effective.localeCompare(a.effective)).slice(0,6);
+  const state = userState[currentUser.id];
+  const favMach = state.favMachines.map(id=>machines.find(m=>m.id===id)).filter(Boolean);
+  const recents = state.recent.map(r=>({doc:documents.find(d=>d.id===r.id),ts:r.ts})).filter(x=>x.doc);
+  const recentAcks = state.acks.slice(-5).reverse();
+  const recentRevisions = [...docs].filter(d=>parseInt(d.revision.replace(/\D/g,""))>=2).slice(0,5);
+
+  $("#homeView").innerHTML = `
+    <div class="welcome-banner">
+      <div>
+        <h2>${t("welcome")}, ${currentUser.name.split(" ")[0]}</h2>
+        <p>${t("welcomeSub")} <strong>${pName}</strong> &middot; ${roles[currentUser.role].label}</p>
+      </div>
+      <div class="welcome-stats">
+        <div class="welcome-stat"><div class="n">${userMachines.length}</div><div class="l">${t("kpi_machines")}</div></div>
+        <div class="welcome-stat"><div class="n">${docs.length}</div><div class="l">${t("kpi_docs")}</div></div>
+        <div class="welcome-stat"><div class="n">${docs.filter(d=>d.status==="Draft").length}</div><div class="l">Drafts</div></div>
+      </div>
+    </div>
+
+    <div class="tile-grid">
+      <div class="tile t1" onclick="show('plant')">
+        <div class="ico-wrap">&#9881;</div>
+        <div class="n">${userMachines.length}</div>
+        <div class="l">${t("kpi_machines")}</div>
+        <div class="meta">${userPlants().length} ${userPlants().length===1?"plant":"plants"}</div>
+      </div>
+      <div class="tile t2" onclick="show('library')">
+        <div class="ico-wrap">&#128737;</div>
+        <div class="n">${docs.filter(d=>d.category==="SOP"||d.category==="Safety").length}</div>
+        <div class="l">${t("kpi_sop")}</div>
+        <div class="meta">Required reading enforced</div>
+      </div>
+      <div class="tile t3" onclick="show('library')">
+        <div class="ico-wrap">&#128260;</div>
+        <div class="n">${recentRevisions.length}</div>
+        <div class="l">${t("kpi_recent")}</div>
+        <div class="meta">Revised in last 30 days</div>
+      </div>
+      <div class="tile t4" onclick="show('library')">
+        <div class="ico-wrap">&#128196;</div>
+        <div class="n">${docs.length}</div>
+        <div class="l">${t("kpi_docs")}</div>
+        <div class="meta">${docs.filter(d=>d.status==="Approved").length} approved</div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-head"><h3>${t("latestDocs")}</h3><a class="link-text" onclick="show('library')">${t("nav_docs")} &rarr;</a></div>
+        <div class="search-wrap"><span class="search-ico">&#128269;</span><input placeholder="${t("searchDocs")}" oninput="filterHomeDocs(this.value)" /></div>
+        <div class="doc-list" id="homeDocList">${renderDocRows(latestDocs)}</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>${t("favMachines")}</h3></div>
+        <div class="card-body">
+          ${favMach.length? favMach.map(m=>`
+            <div class="doc-row" onclick="openMachine('${m.id}')">
+              <div class="doc-ico" style="background:#e0e7ff;color:#4f46e5;">&#9881;</div>
+              <div class="doc-meta">
+                <div class="doc-title">${m.name}</div>
+                <div class="doc-sub">${plantName(m.plant)} &middot; ${m.area}</div>
+              </div>
+              <span class="star on" onclick="event.stopPropagation();toggleFavoriteMachine('${m.id}');renderHome();">&#9733;</span>
+            </div>`).join("") :
+            `<div class="empty"><div class="ico">&#9734;</div>No favorite machines yet</div>`}
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid-2">
+      <div class="card">
+        <div class="card-head"><h3>${t("recentViewed")}</h3></div>
+        <div class="card-body">
+          ${recents.length ? recents.slice(0,5).map(r=>`
+            <div class="doc-row" onclick="openDoc('${r.doc.id}')">
+              <div class="doc-ico">&#128196;</div>
+              <div class="doc-meta">
+                <div class="doc-title">${r.doc.title}</div>
+                <div class="doc-sub">${plantName(r.doc.plant)} &middot; ${machineName(r.doc.machine)} &middot; ${timeAgo(r.ts)}</div>
+              </div>
+              ${badge(r.doc.revState)}
+            </div>`).join("") :
+            `<div class="empty"><div class="ico">&#128338;</div>No recently viewed documents</div>`}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>${t("recentAcks")}</h3></div>
+        <div class="card-body">
+          ${recentAcks.length ? recentAcks.map(a=>`
+            <div class="ack-row">
+              <div class="ack-ico">&#10003;</div>
+              <div class="ack-meta">
+                <div class="ack-title">${a.title}</div>
+                <div class="ack-sub">${timeAgo(a.ts)}</div>
+              </div>
+              ${badge("Approved")}
+            </div>`).join("") :
+            `<div class="empty"><div class="ico">&#10003;</div>No recent acknowledgments</div>`}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="card-head"><h3>${t("recentRev")}</h3><span class="sub">Last 30 days</span></div>
+      <div class="card-body">${renderDocRows(recentRevisions)}</div>
+    </div>
+  `;
+}
+function filterHomeDocs(q){
+  const list = visibleDocs().filter(d=>d.title.toLowerCase().includes(q.toLowerCase())).slice(0,6);
+  $("#homeDocList").innerHTML = renderDocRows(list);
+}
+function renderDocRows(list){
+  if(!list.length) return `<div class="empty"><div class="ico">&#128196;</div>No documents</div>`;
+  return list.map(d=>`
+    <div class="doc-row" onclick="openDoc('${d.id}')">
+      <div class="doc-ico">&#128196;</div>
+      <div class="doc-meta">
+        <div class="doc-title">${d.title}</div>
+        <div class="doc-sub">${plantName(d.plant)} &middot; ${machineName(d.machine)} &middot; ${d.revision}</div>
+      </div>
+      ${langBadge(d.language)}
+      ${badge(d.status)}
+      <span class="star ${isFavDoc(d.id)?"on":""}" onclick="event.stopPropagation();toggleFavoriteDoc('${d.id}');show(currentView);">&#9733;</span>
+    </div>`).join("");
+}
+
+/* =========================================================
+   VIEW: PLANT OVERVIEW
+========================================================= */
+let plantFilter = "all";
+function renderPlant(){
+  const myMachines = visibleMachines();
+  const docs = visibleDocs();
+  const pName = currentUser.plants.length===plants.length ? "All Plants" : currentUser.plants.map(plantName).join(", ");
+  const areas = ["all", ...new Set(myMachines.map(m=>m.area))];
+  const filtered = plantFilter==="all"?myMachines:myMachines.filter(m=>m.area===plantFilter);
+
+  $("#plantView").innerHTML = `
+    <div class="page-head">
+      <div class="page-title">${pName} &mdash; ${t("plantOverview")}</div>
+      <div class="page-sub">${t("plantSub")}</div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="l">${t("machines")}</div><div class="n">${myMachines.length}</div><div class="d">Active equipment</div></div>
+      <div class="kpi"><div class="l">${t("sopCount")}</div><div class="n">${docs.filter(d=>d.category==="SOP").length}</div><div class="d">+2 this quarter</div></div>
+      <div class="kpi"><div class="l">${t("safetyCount")}</div><div class="n">${docs.filter(d=>d.category==="Safety").length}</div><div class="d">100% approved</div></div>
+      <div class="kpi"><div class="l">${t("pmCount")}</div><div class="n">${docs.filter(d=>d.category==="PM").length}</div><div class="d">Weekly PMs current</div></div>
+      <div class="kpi"><div class="l">${t("trainingCount")}</div><div class="n">${docs.filter(d=>d.trainingRequired).length}</div><div class="d">Assignments active</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>${t("machines")}</h3><span class="sub">${filtered.length} shown</span></div>
+      <div class="card-body pad">
+        <div class="chips">
+          ${areas.map(a=>`<div class="chip ${plantFilter===a?"active":""}" onclick="plantFilter='${a}';renderPlant();">${a==="all"?t("allDepts"):a}</div>`).join("")}
+        </div>
+        <div class="machine-grid">
+          ${filtered.map(m=>`
+            <div class="machine-card" onclick="openMachine('${m.id}')">
+              <div class="machine-img ${m.img}">${m.name.split(" ").map(w=>w[0]).slice(0,2).join("")}</div>
+              <div class="machine-body">
+                <div class="machine-name">${m.name}</div>
+                <div class="machine-area">${plantName(m.plant)} &middot; ${m.area}</div>
+              </div>
+              <div class="machine-foot">
+                <span>${docs.filter(d=>d.machine===m.id).length} documents</span>
+                <span class="star ${isFavMachine(m.id)?"on":""}" onclick="event.stopPropagation();toggleFavoriteMachine('${m.id}');renderPlant();">&#9733;</span>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   VIEW: MACHINE DETAIL
+========================================================= */
+let machineTab = "SOP";
+function openMachine(mId){
+  currentMachine = machines.find(m=>m.id===mId);
+  machineTab = "SOP";
+  logAudit("open","machine",mId,currentMachine.name,"Opened machine detail","blue");
+  show("machine");
+}
+function renderMachine(){
+  if(!currentMachine){ show("plant"); return; }
+  const m = currentMachine;
+  const docs = visibleDocs().filter(d=>d.machine===m.id);
+  const tabMap = {"SOP":"tab_sops","Safety":"tab_safety","PM":"tab_pm","Training":"tab_training","Troubleshooting":"tab_ts","Quality":"tab_quality"};
+  const shown = docs.filter(d=>d.category===machineTab);
+
+  $("#machineView").innerHTML = `
+    <div class="crumbs">
+      <a onclick="show('plant')">${plantName(m.plant)}</a> &rsaquo; <span>${m.name}</span>
+    </div>
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:20px;padding:20px;">
+        <div class="machine-img ${m.img}" style="width:100px;height:100px;border-radius:12px;font-size:22px;">${m.name.split(" ").map(w=>w[0]).slice(0,2).join("")}</div>
+        <div style="flex:1;">
+          <div class="page-title">${m.name}</div>
+          <div class="page-sub">${plantName(m.plant)} &middot; ${m.area} &middot; ${docs.length} documents</div>
+        </div>
+        <div>
+          <button class="btn btn-s" onclick="toggleFavoriteMachine('${m.id}');renderMachine();">
+            <span class="star ${isFavMachine(m.id)?"on":""}" style="font-size:14px;">&#9733;</span>
+            ${isFavMachine(m.id)?(lang==="es"?"Favorito":"Favorited"):t("favorite")}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      ${Object.keys(tabMap).map(c=>`<div class="tab ${machineTab===c?"active":""}" onclick="machineTab='${c}';renderMachine();">${t(tabMap[c])}</div>`).join("")}
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        ${shown.length ? renderDocRows(shown) : `<div class="empty"><div class="ico">&#128196;</div>No ${machineTab} documents for this machine</div>`}
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   VIEW: DOCUMENT VIEWER
+========================================================= */
+function openDoc(dId){
+  currentDoc = documents.find(d=>d.id===dId);
+  if(!currentDoc) return;
+  addRecent(dId);
+  logAudit("open","document",dId,currentDoc.title,"Opened document","blue");
+  show("viewer");
+}
+function renderViewer(){
+  if(!currentDoc){ show("library"); return; }
+  const d = currentDoc;
+  const related = visibleDocs().filter(x=>x.machine===d.machine && x.id!==d.id).slice(0,5);
+  const alreadyAcked = userState[currentUser.id].acks.some(a=>a.docId===d.id);
+
+  $("#viewerView").innerHTML = `
+    <div class="crumbs">
+      <a onclick="show('home')">${t("nav_home")}</a> &rsaquo;
+      <a onclick="openMachine('${d.machine}')">${machineName(d.machine)}</a> &rsaquo;
+      <span>${d.title}</span>
+    </div>
+
+    <div class="viewer-grid">
+      <div class="viewer-paper">
+        <div class="viewer-head">
+          <div>
+            <div class="viewer-title">${d.title}</div>
+            <div class="viewer-metatext">${t("docId")}: <strong>${d.id}</strong> &middot; ${plantName(d.plant)} &middot; ${machineName(d.machine)}</div>
+            <div class="viewer-meta">
+              ${badge(d.revState)} ${badge(d.status)} ${langBadge(d.language)}
+              <span class="badge" style="background:var(--gray-100);color:var(--gray-600);">${d.revision}</span>
+            </div>
+          </div>
+          <div>
+            <span class="star ${isFavDoc(d.id)?"on":""}" onclick="toggleFavoriteDoc('${d.id}');renderViewer();" style="font-size:20px;">&#9733;</span>
+          </div>
+        </div>
+        <div class="viewer-page">
+          <h1>${d.title}</h1>
+          <p><strong>${t("docId")}:</strong> ${d.id} &nbsp; <strong>${t("revision")}:</strong> ${d.revision} &nbsp; <strong>${t("effective")}:</strong> ${formatDate(d.effective)}</p>
+          <div class="viewer-notice">This is a controlled document. Printed copies are uncontrolled unless stamped by ${d.approver}.</div>
+          <h2>1. Purpose</h2>
+          <p>This procedure defines the standard method for the safe and consistent operation of <strong>${machineName(d.machine)}</strong> at the ${plantName(d.plant)} facility. All operators, supervisors and maintenance personnel must comply with the steps described herein.</p>
+          <h2>2. Scope</h2>
+          <p>This document applies to all shifts and all production orders run on the referenced equipment. Deviations require written approval by the Plant Manager and the Quality Manager.</p>
+          <h2>3. Safety Requirements</h2>
+          <ol>
+            <li>Verify all guarding is in place prior to startup.</li>
+            <li>Lockout/Tagout per Safety SOP-LOTO-Rev 2 before any service access.</li>
+            <li>Wear required PPE: safety glasses, hearing protection, steel-toe footwear.</li>
+            <li>Confirm emergency stop is functional on each shift start.</li>
+          </ol>
+          <h2>4. Procedure</h2>
+          <ol>
+            <li>Complete pre-start inspection and record on form QA-F-012.</li>
+            <li>Verify recipe and tooling match the production schedule.</li>
+            <li>Start the equipment in accordance with the startup sequence.</li>
+            <li>Monitor process variables and record at required intervals.</li>
+            <li>At end of run, perform shutdown and complete end-of-run checklist.</li>
+          </ol>
+          <h2>5. Revision History</h2>
+          <p>See revision history panel on the right for a complete list of approved revisions.</p>
+        </div>
+      </div>
+
+      <div class="viewer-side">
+        <div class="card">
+          <div class="card-body pad">
+            <div class="side-actions">
+              <button class="btn btn-p" onclick="logAudit('download','document','${d.id}','${d.title}','Downloaded PDF','blue');alert('Download started');">&#128229; ${t("download")}</button>
+              <button class="btn btn-s" onclick="logAudit('print','document','${d.id}','${d.title}','Sent to printer','blue');window.print();">&#128424; ${t("print")}</button>
+              <button class="btn btn-s" onclick="toggleFavoriteDoc('${d.id}');renderViewer();">
+                <span class="star ${isFavDoc(d.id)?"on":""}" style="font-size:13px;">&#9733;</span>
+                ${isFavDoc(d.id)?(lang==="es"?"Favorito":"Favorited"):t("favorite")}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>${t("acknowledge")}</h3></div>
+          <div class="card-body pad" id="ackBox">
+            ${alreadyAcked ?
+              `<div style="display:flex;align-items:center;gap:10px;color:var(--green-600);">
+                <div class="ack-ico">&#10003;</div><strong>${t("acknowledged")}</strong>
+              </div>` :
+              `<label class="checkbox" style="font-size:13px;margin-bottom:12px;">
+                <input type="checkbox" id="ackCheck" /> <span>${t("ackPrompt")}</span>
+              </label>
+              <button class="btn btn-p" style="width:100%;justify-content:center;" onclick="doAck('${d.id}','${d.title}')">&#10003; ${t("acknowledge")}</button>`
+            }
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>${t("revHistory")}</h3></div>
+          <div class="card-body">
+            ${d.revisions.map((r,i)=>`
+              <div class="rev-item">
+                <div class="rev-dot ${i===0?"current":""}">${r.rev.replace("Rev ","")}</div>
+                <div class="rev-meta">
+                  <div class="rev-title">${r.rev} &middot; ${r.author}</div>
+                  <div class="rev-sub">${formatDate(r.date)}</div>
+                </div>
+                ${badge(r.state)}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>${t("relatedDocs")}</h3></div>
+          <div class="card-body">
+            ${related.length ? related.map(r=>`
+              <div class="doc-row" onclick="openDoc('${r.id}')" style="padding:10px 16px;">
+                <div class="doc-ico" style="width:28px;height:28px;font-size:12px;">&#128196;</div>
+                <div class="doc-meta">
+                  <div class="doc-title" style="font-size:12.5px;">${r.title}</div>
+                  <div class="doc-sub" style="font-size:11px;">${r.revision}</div>
+                </div>
+                ${badge(r.status)}
+              </div>`).join("") :
+              `<div class="empty">No related documents</div>`}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Metadata</h3></div>
+          <div class="card-body pad">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;">
+              <div><div style="color:var(--gray-500);text-transform:uppercase;font-size:10.5px;font-weight:600;">${t("owner")}</div><div>${d.owner}</div></div>
+              <div><div style="color:var(--gray-500);text-transform:uppercase;font-size:10.5px;font-weight:600;">${t("approver")}</div><div>${d.approver}</div></div>
+              <div><div style="color:var(--gray-500);text-transform:uppercase;font-size:10.5px;font-weight:600;">${t("effective")}</div><div>${formatDate(d.effective)}</div></div>
+              <div><div style="color:var(--gray-500);text-transform:uppercase;font-size:10.5px;font-weight:600;">${t("language")}</div><div>${d.language}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function doAck(dId,title){
+  const check = $("#ackCheck");
+  if(!check || !check.checked){ alert(lang==="es"?"Confirme la lectura":"Please confirm you have read the document"); return; }
+  userState[currentUser.id].acks.push({ docId:dId, title, ts:new Date().toISOString() });
+  logAudit("acknowledge","document",dId,title,"Acknowledged document","green");
+  renderViewer();
+}
+
+/* =========================================================
+   VIEW: DOCUMENTS LIBRARY
+========================================================= */
+const libState = { q:"", plant:"all", machine:"all", type:"all", status:"all", lang:"all", rev:"all", fav:false, sort:"new" };
+function renderLibrary(){
+  const docs = visibleDocs();
+  let list = docs.filter(d=>{
+    if(libState.q && !(d.title+d.id+d.owner).toLowerCase().includes(libState.q.toLowerCase())) return false;
+    if(libState.plant!=="all" && d.plant!==libState.plant) return false;
+    if(libState.machine!=="all" && d.machine!==libState.machine) return false;
+    if(libState.type!=="all" && d.category!==libState.type) return false;
+    if(libState.status!=="all" && d.status!==libState.status) return false;
+    if(libState.lang!=="all" && d.language!==libState.lang) return false;
+    if(libState.rev!=="all" && d.revState!==libState.rev) return false;
+    if(libState.fav && !isFavDoc(d.id)) return false;
+    return true;
+  });
+  const recentIds = userState[currentUser.id].recent.map(r=>r.id);
+  if(libState.sort==="new") list.sort((a,b)=>b.effective.localeCompare(a.effective));
+  if(libState.sort==="title") list.sort((a,b)=>a.title.localeCompare(b.title));
+  if(libState.sort==="rev") list.sort((a,b)=>parseInt(b.revision.replace(/\D/g,""))-parseInt(a.revision.replace(/\D/g,"")));
+  if(libState.sort==="recent") list.sort((a,b)=>recentIds.indexOf(a.id)-recentIds.indexOf(b.id));
+
+  const plantOpts = userPlants().map(p=>`<option value="${p}">${plantName(p)}</option>`).join("");
+  const machOpts = visibleMachines().map(m=>`<option value="${m.id}">${m.name}</option>`).join("");
+
+  $("#libraryView").innerHTML = `
+    <div class="page-head">
+      <div class="page-title">${t("library")}</div>
+      <div class="page-sub">${t("librarySub")}</div>
+    </div>
+
+    <div class="lib-toolbar">
+      <input type="search" class="form-control" placeholder="${t("searchDocs")}" value="${libState.q}" oninput="libState.q=this.value;renderLibrary();" />
+      <select class="form-control" onchange="libState.plant=this.value;renderLibrary();">
+        <option value="all">${t("filterPlant")}: ${t("allPlants")}</option>${plantOpts}
+      </select>
+      <select class="form-control" onchange="libState.machine=this.value;renderLibrary();">
+        <option value="all">${t("filterMachine")}: All</option>${machOpts}
+      </select>
+      <select class="form-control" onchange="libState.type=this.value;renderLibrary();">
+        <option value="all">${t("filterType")}: All</option>
+        ${docCategories.map(c=>`<option>${c}</option>`).join("")}
+      </select>
+      <select class="form-control" onchange="libState.status=this.value;renderLibrary();">
+        <option value="all">${t("filterStatus")}: All</option>
+        <option>Approved</option><option>Draft</option><option>Obsolete</option>
+      </select>
+      <select class="form-control" onchange="libState.lang=this.value;renderLibrary();">
+        <option value="all">${t("filterLang")}: All</option>
+        <option>English</option><option>Spanish</option><option>Bilingual</option>
+      </select>
+      <select class="form-control" onchange="libState.rev=this.value;renderLibrary();">
+        <option value="all">${t("filterRev")}: All</option>
+        <option>Current</option><option>Draft</option><option>Superseded</option><option>Obsolete</option>
+      </select>
+      <label class="checkbox"><input type="checkbox" ${libState.fav?"checked":""} onchange="libState.fav=this.checked;renderLibrary();"> ${t("filterFav")}</label>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+        <span style="font-size:12px;color:var(--gray-500);">${t("sortBy")}</span>
+        <select class="form-control" onchange="libState.sort=this.value;renderLibrary();">
+          <option value="new">${t("sortNew")}</option>
+          <option value="title">${t("sortTitle")}</option>
+          <option value="rev">${t("sortRev")}</option>
+          <option value="recent">${t("sortRecent")}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding:0;overflow-x:auto;">
+        <table class="table">
+          <thead><tr>
+            <th></th><th>${t("col_title")}</th><th>${t("col_plant")}</th><th>${t("col_machine")}</th>
+            <th>${t("col_type")}</th><th>${t("col_rev")}</th><th>${t("col_status")}</th>
+            <th>${t("col_lang")}</th><th>${t("col_effective")}</th><th>${t("col_owner")}</th>
+          </tr></thead>
+          <tbody>
+            ${list.length ? list.map(d=>`
+              <tr onclick="openDoc('${d.id}')">
+                <td><span class="star ${isFavDoc(d.id)?"on":""}" onclick="event.stopPropagation();toggleFavoriteDoc('${d.id}');renderLibrary();">&#9733;</span></td>
+                <td class="title">${d.title}<div style="font-size:11px;color:var(--gray-400);font-weight:400;">${d.id}</div></td>
+                <td>${plantName(d.plant)}</td>
+                <td>${machineName(d.machine)}</td>
+                <td>${d.category}</td>
+                <td>${d.revision}</td>
+                <td>${badge(d.status)}</td>
+                <td>${langBadge(d.language)}</td>
+                <td>${formatDate(d.effective)}</td>
+                <td>${d.owner}</td>
+              </tr>`).join("") :
+              `<tr><td colspan="10"><div class="empty"><div class="ico">&#128269;</div>No documents match your filters</div></td></tr>`
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   VIEW: TRAINING
+========================================================= */
+function renderTraining(){
+  // required = documents where trainingRequired or readRequired
+  const required = visibleDocs().filter(d=>d.trainingRequired||d.readRequired);
+  const acked = userState[currentUser.id].acks.map(a=>a.docId);
+  const pct = required.length? Math.round((required.filter(d=>acked.includes(d.id)).length / required.length) * 100) : 0;
+
+  $("#trainingView").innerHTML = `
+    <div class="page-head">
+      <div class="page-title">${t("training")}</div>
+      <div class="page-sub">${t("trainingSub")}</div>
+    </div>
+
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
+      <div class="kpi"><div class="l">Assigned</div><div class="n">${required.length}</div></div>
+      <div class="kpi"><div class="l">${t("acknowledged")}</div><div class="n" style="color:var(--green-600);">${required.filter(d=>acked.includes(d.id)).length}</div></div>
+      <div class="kpi"><div class="l">Pending</div><div class="n" style="color:var(--amber-600);">${required.filter(d=>!acked.includes(d.id)).length}</div></div>
+      <div class="kpi"><div class="l">${t("completion")}</div><div class="n">${pct}%</div><div class="progress" style="margin-top:8px;"><div class="progress-bar" style="width:${pct}%;"></div></div></div>
+    </div>
+
+    <div class="training-grid">
+      ${required.map(d=>{
+        const done = acked.includes(d.id);
+        const overdue = !done && Math.random()<0.3;
+        return `
+          <div class="training-card ${overdue?"overdue":""}">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+              <div class="doc-ico" style="background:${done?"var(--green-50)":"var(--amber-50)"};color:${done?"var(--green-600)":"var(--amber-600)"};">${done?"&#10003;":"&#128214;"}</div>
+              <div style="flex:1;">
+                <div style="font-weight:600;font-size:14px;color:var(--gray-900);">${d.title}</div>
+                <div style="font-size:12px;color:var(--gray-500);">${machineName(d.machine)} &middot; ${d.revision}</div>
+              </div>
+              ${badge(done?"Approved":(overdue?"Obsolete":"Draft"))}
+            </div>
+            <div style="font-size:12px;color:var(--gray-600);margin-bottom:10px;">
+              ${done ? (lang==="es"?"Reconocimiento completado":"Acknowledgment complete") :
+                (overdue ? `<span style="color:var(--red-600);font-weight:600;">${t("overdue")}</span>` : `${t("dueIn")} 5 ${t("days")}`)}
+            </div>
+            <div class="progress"><div class="progress-bar" style="width:${done?100:(overdue?20:60)}%;"></div></div>
+            <button class="btn btn-s" style="margin-top:12px;width:100%;justify-content:center;" onclick="openDoc('${d.id}')">${done?(lang==="es"?"Revisar":"Review"):t("open")}</button>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+/* =========================================================
+   VIEW: AUDIT TRAIL
+========================================================= */
+const auditState = { user:"all", plant:"all", event:"all", obj:"all" };
+function renderAudit(){
+  const visiblePlants = currentUser.plants;
+  let evts = auditLog.filter(e=>{
+    if(!isCorpAdmin() && e.plant!=="all" && e.plant!=="multi" && !visiblePlants.includes(e.plant)) return false;
+    if(auditState.user!=="all" && e.userId!==auditState.user) return false;
+    if(auditState.plant!=="all" && e.plant!==auditState.plant) return false;
+    if(auditState.event!=="all" && e.action!==auditState.event) return false;
+    if(auditState.obj!=="all" && e.objType!==auditState.obj) return false;
+    return true;
+  });
+  const eventTypes = [...new Set(auditLog.map(e=>e.action))];
+  const objTypes = [...new Set(auditLog.map(e=>e.objType))];
+
+  const iconMap = {
+    login:"&#128273;", logout:"&#9211;", open:"&#128196;",
+    acknowledge:"&#10003;", favorite:"&#9733;", unfavorite:"&#9734;",
+    print:"&#128424;", download:"&#128229;", upload_revision:"&#128228;",
+    status_change:"&#128260;", metadata_edit:"&#9998;", language_switch:"&#127760;"
+  };
+
+  $("#auditView").innerHTML = `
+    <div class="page-head">
+      <div class="page-title">${t("audit")}</div>
+      <div class="page-sub">${t("auditSub")}</div>
+    </div>
+
+    <div class="lib-toolbar">
+      <select class="form-control" onchange="auditState.user=this.value;renderAudit();">
+        <option value="all">${t("allUsers")}</option>
+        ${users.map(u=>`<option value="${u.id}">${u.name}</option>`).join("")}
+      </select>
+      <select class="form-control" onchange="auditState.plant=this.value;renderAudit();">
+        <option value="all">${t("allPlants")}</option>
+        ${plants.map(p=>`<option value="${p.id}">${p.name}</option>`).join("")}
+      </select>
+      <select class="form-control" onchange="auditState.event=this.value;renderAudit();">
+        <option value="all">${t("allEvents")}</option>
+        ${eventTypes.map(e=>`<option value="${e}">${e.replace("_"," ")}</option>`).join("")}
+      </select>
+      <select class="form-control" onchange="auditState.obj=this.value;renderAudit();">
+        <option value="all">${t("allObjects")}</option>
+        ${objTypes.map(o=>`<option value="${o}">${o}</option>`).join("")}
+      </select>
+      <input type="date" class="form-control" />
+      <div style="margin-left:auto;font-size:12px;color:var(--gray-500);">${evts.length} events</div>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding:0;overflow-x:auto;">
+        <table class="table">
+          <thead><tr>
+            <th>Time</th><th>User</th><th>Plant</th><th>Event</th><th>Object</th><th>Name</th><th>Details</th>
+          </tr></thead>
+          <tbody>
+            ${evts.length ? evts.map(e=>`
+              <tr>
+                <td style="white-space:nowrap;font-size:11.5px;color:var(--gray-500);">${new Date(e.ts).toLocaleString(lang==="es"?"es-ES":"en-US")}</td>
+                <td><strong>${e.user}</strong></td>
+                <td>${e.plant==="all"?"&mdash;":e.plant==="multi"?"Multi":plantName(e.plant)}</td>
+                <td><span class="audit-ico ${e.sev}" style="width:24px;height:24px;display:inline-flex;font-size:11px;margin-right:6px;vertical-align:middle;">${iconMap[e.action]||"&#9679;"}</span>${e.action.replace("_"," ")}</td>
+                <td>${e.objType}</td>
+                <td>${e.objName}</td>
+                <td style="color:var(--gray-600);">${e.details}</td>
+              </tr>
+            `).join("") : `<tr><td colspan="7"><div class="empty">No events match the filters</div></td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   VIEW: ADMIN
+========================================================= */
+function renderAdmin(){
+  if(!canAdmin()){
+    $("#adminView").innerHTML = `<div class="empty"><div class="ico">&#128274;</div>You do not have permission to view this page.</div>`;
+    return;
+  }
+  const adminDocs = isCorpAdmin() ? documents : visibleDocs();
+  const allowedPlants = isCorpAdmin() ? plants : plants.filter(p=>userPlants().includes(p.id));
+
+  $("#adminView").innerHTML = `
+    <div class="page-head">
+      <div class="page-title">${t("admin")}</div>
+      <div class="page-sub">${t("adminSub")}</div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-head"><h3>${t("uploadDoc")}</h3></div>
+        <div class="card-body pad">
+          <div class="dropzone">
+            <div class="ico">&#128228;</div>
+            <h4>${t("dragDrop")}</h4>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">PDF, DOCX, XLSX up to 50MB</div>
+          </div>
+          <div class="form-grid">
+            <div><label>${t("col_title")}</label><input class="form-control" placeholder="Document title" /></div>
+            <div><label>${t("filterPlant")}</label>
+              <select class="form-control">${allowedPlants.map(p=>`<option value="${p.id}">${p.name}</option>`).join("")}</select>
+            </div>
+            <div><label>${t("filterMachine")}</label>
+              <select class="form-control">${visibleMachines().map(m=>`<option value="${m.id}">${m.name}</option>`).join("")}</select>
+            </div>
+            <div><label>${t("filterType")}</label>
+              <select class="form-control">${docCategories.map(c=>`<option>${c}</option>`).join("")}</select>
+            </div>
+            <div><label>${t("col_rev")}</label><input class="form-control" placeholder="Rev 1" /></div>
+            <div><label>${t("col_status")}</label>
+              <select class="form-control"><option>Approved</option><option>Draft</option><option>Obsolete</option></select>
+            </div>
+            <div><label>${t("filterLang")}</label>
+              <select class="form-control"><option>English</option><option>Spanish</option><option>Bilingual</option></select>
+            </div>
+            <div><label>${t("col_effective")}</label><input type="date" class="form-control" /></div>
+            <div><label>${t("col_owner")}</label><input class="form-control" placeholder="Owner name" /></div>
+            <div class="full" style="display:flex;gap:20px;flex-wrap:wrap;">
+              <div class="switch" onclick="this.classList.toggle('on');"><div class="switch-track"><div class="switch-dot"></div></div><span class="switch-label">${t("readRequired")}</span></div>
+              <div class="switch" onclick="this.classList.toggle('on');"><div class="switch-track"><div class="switch-dot"></div></div><span class="switch-label">${t("trainingRequired")}</span></div>
+            </div>
+            <div class="full">
+              <button class="btn btn-p" onclick="simulateUpload()">&#10003; ${t("saveDoc")}</button>
+              <button class="btn btn-s">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Quick Stats</h3></div>
+        <div class="card-body pad">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="kpi"><div class="l">Total Docs</div><div class="n">${adminDocs.length}</div></div>
+            <div class="kpi"><div class="l">Approved</div><div class="n" style="color:var(--green-600);">${adminDocs.filter(d=>d.status==="Approved").length}</div></div>
+            <div class="kpi"><div class="l">Drafts</div><div class="n" style="color:var(--amber-600);">${adminDocs.filter(d=>d.status==="Draft").length}</div></div>
+            <div class="kpi"><div class="l">Obsolete</div><div class="n" style="color:var(--red-600);">${adminDocs.filter(d=>d.status==="Obsolete").length}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="card-head"><h3>${t("docTable")}</h3><span class="sub">${adminDocs.length} documents</span></div>
+      <div class="card-body" style="padding:0;overflow-x:auto;">
+        <table class="table">
+          <thead><tr>
+            <th>${t("col_title")}</th><th>${t("col_plant")}</th><th>${t("col_machine")}</th>
+            <th>${t("col_rev")}</th><th>${t("col_status")}</th><th>${t("col_lang")}</th><th>${t("col_actions")}</th>
+          </tr></thead>
+          <tbody>
+            ${adminDocs.map(d=>`
+              <tr>
+                <td class="title">${d.title}<div style="font-size:11px;color:var(--gray-400);font-weight:400;">${d.id}</div></td>
+                <td>${plantName(d.plant)}</td>
+                <td>${machineName(d.machine)}</td>
+                <td>${d.revision}</td>
+                <td>${badge(d.status)}</td>
+                <td>${langBadge(d.language)}</td>
+                <td>
+                  <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px;" onclick="adminAction('edit','${d.id}')">${t("editMeta")}</button>
+                  <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px;" onclick="adminAction('rev','${d.id}')">${t("newRev")}</button>
+                  <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px;color:var(--green-600);" onclick="adminAction('approve','${d.id}')">${t("approve")}</button>
+                  <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px;color:var(--red-600);" onclick="adminAction('obsolete','${d.id}')">${t("markObsolete")}</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+function simulateUpload(){
+  logAudit("upload_revision","document","DOC-NEW","New Document","Uploaded new document revision","amber");
+  alert(lang==="es"?"Documento guardado (simulado). Evento de auditoría creado.":"Document saved (simulated). Audit event recorded.");
+  renderAdmin();
+}
+function adminAction(kind,dId){
+  const d = documents.find(x=>x.id===dId); if(!d) return;
+  if(kind==="edit"){ logAudit("metadata_edit","document",dId,d.title,"Edited document metadata","amber"); }
+  if(kind==="rev"){
+    const num = parseInt(d.revision.replace(/\D/g,""))+1;
+    d.revision = "Rev "+num;
+    d.revisions.unshift({ rev:d.revision, status:"Approved", date:new Date().toISOString().slice(0,10), author:currentUser.name, state:"Current" });
+    logAudit("upload_revision","document",dId,d.title,"Created "+d.revision,"amber");
+  }
+  if(kind==="approve"){ d.status="Approved"; d.revState="Current"; logAudit("status_change","document",dId,d.title,"Approved document","green"); }
+  if(kind==="obsolete"){ d.status="Obsolete"; d.revState="Obsolete"; logAudit("status_change","document",dId,d.title,"Marked obsolete","red"); }
+  renderAdmin();
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+renderDemoUsers();
+</script>
+</body>
+</html>
