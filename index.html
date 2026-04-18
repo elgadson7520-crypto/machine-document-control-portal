@@ -286,45 +286,80 @@ a{color:inherit;text-decoration:none;}
 
 /* Welcome banner */
 .welcome-banner{
-  background:#fff;
-  color:var(--black);
-  border:1px solid var(--gray-200);
-  border-left:3px solid var(--red);
+  position:relative;overflow:hidden;
+  background:
+    linear-gradient(90deg, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.72) 50%, rgba(10,10,10,0.4) 100%),
+    url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1600&q=70&auto=format') center/cover no-repeat,
+    var(--black);
+  color:#fff;
   border-radius:var(--radius-md);
-  padding:22px 26px;
+  padding:32px 36px;
   margin-bottom:22px;
-  display:flex;align-items:center;justify-content:space-between;
+  min-height:160px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
 }
-.welcome-banner h2{font-size:20px;font-weight:700;margin-bottom:4px;color:var(--black);}
-.welcome-banner p{color:var(--gray-600);font-size:13px;max-width:640px;}
-.welcome-stats{display:flex;gap:28px;}
+.welcome-banner::after{
+  content:"";position:absolute;top:0;bottom:0;left:0;width:3px;background:var(--red);
+}
+.welcome-banner h2{font-size:26px;font-weight:700;margin-bottom:6px;color:#fff;letter-spacing:-0.3px;}
+.welcome-banner p{color:rgba(255,255,255,0.75);font-size:13px;max-width:640px;}
+.welcome-banner .badge-role{
+  display:inline-block;background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;
+  padding:3px 8px;border-radius:var(--radius-sm);margin-bottom:10px;
+}
+.welcome-stats{display:flex;gap:32px;z-index:1;}
 .welcome-stat{text-align:right;}
-.welcome-stat .n{font-size:24px;font-weight:700;color:var(--black);}
-.welcome-stat .l{font-size:10.5px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
+.welcome-stat .n{font-size:30px;font-weight:700;color:#fff;letter-spacing:-0.5px;line-height:1;}
+.welcome-stat .l{font-size:10.5px;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-top:4px;}
 
 /* Tile cards */
 .tile-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;}
 .tile{
-  background:#fff;border:1px solid var(--gray-200);
-  border-radius:var(--radius-md);padding:20px;
-  transition:border-color .15s, box-shadow .15s;
-  cursor:pointer;
   position:relative;
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-md);
+  height:160px;overflow:hidden;cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s;
+  color:#fff;
+  background-size:cover;background-position:center;
 }
-.tile:hover{border-color:var(--black);box-shadow:var(--shadow-sm);}
+.tile::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.85) 100%);
+  transition:background .15s;
+}
+.tile:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.tile:hover::before{background:linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.9) 100%);}
+.tile .tile-content{
+  position:absolute;inset:0;
+  padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;
+  z-index:1;
+}
+.tile .tile-top{display:flex;align-items:flex-start;justify-content:space-between;}
 .tile .ico-wrap{
   width:36px;height:36px;border-radius:var(--radius-sm);
   display:flex;align-items:center;justify-content:center;
-  font-size:16px;margin-bottom:14px;
-  background:var(--gray-100);color:var(--black);
+  font-size:17px;background:rgba(255,255,255,0.12);color:#fff;
+  backdrop-filter:blur(4px);
 }
-.tile.t1 .ico-wrap{background:var(--black);color:#fff;}
-.tile.t2 .ico-wrap{background:var(--red);color:#fff;}
-.tile.t3 .ico-wrap{background:var(--gray-100);color:var(--black);}
-.tile.t4 .ico-wrap{background:var(--gray-100);color:var(--black);}
-.tile .n{font-size:26px;font-weight:700;color:var(--black);letter-spacing:-0.4px;}
-.tile .l{font-size:12.5px;color:var(--gray-600);font-weight:500;margin-top:2px;}
-.tile .meta{font-size:11px;color:var(--gray-500);margin-top:8px;}
+.tile .tile-arrow{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:#fff;
+}
+.tile .n{font-size:30px;font-weight:700;color:#fff;letter-spacing:-0.5px;line-height:1;}
+.tile .l{font-size:13px;color:#fff;font-weight:600;margin-top:4px;letter-spacing:0.1px;}
+.tile .meta{font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;}
+/* Category photos */
+.tile.t1{background-image:url('https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=800&q=60&auto=format');}
+.tile.t2{background-image:url('https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=60&auto=format');}
+.tile.t3{background-image:url('https://images.unsplash.com/photo-1607703703520-bb638e84caf2?w=800&q=60&auto=format');}
+.tile.t4{background-image:url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=60&auto=format');}
+/* Red accent stripe on the primary tile */
+.tile.t2::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);z-index:2;
+}
 
 /* Content cards grid */
 .content-grid{
@@ -359,11 +394,18 @@ a{color:inherit;text-decoration:none;}
 .doc-row:hover{background:var(--gray-50);}
 .doc-row:last-child{border-bottom:none;}
 .doc-ico{
-  width:32px;height:32px;border-radius:var(--radius-sm);
+  width:34px;height:34px;border-radius:var(--radius-sm);
   background:var(--gray-100);color:var(--black);
   display:flex;align-items:center;justify-content:center;
-  font-size:14px;flex-shrink:0;
+  font-size:11px;font-weight:700;flex-shrink:0;
+  letter-spacing:0.3px;
+  text-transform:uppercase;
 }
+/* File-type variants */
+.doc-ico.pdf{background:var(--red);color:#fff;}
+.doc-ico.docx{background:var(--black);color:#fff;}
+.doc-ico.xlsx{background:var(--green-600);color:#fff;}
+.doc-ico.pm{background:var(--amber-600);color:#fff;}
 .doc-meta{flex:1;min-width:0;}
 .doc-title{font-weight:600;font-size:13px;color:var(--gray-900);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .doc-sub{font-size:12px;color:var(--gray-500);}
@@ -435,18 +477,26 @@ a{color:inherit;text-decoration:none;}
 }
 .machine-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--blue-400);}
 .machine-img{
-  height:100px;
-  background:var(--gray-100);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--black);font-size:26px;font-weight:700;letter-spacing:0.5px;
-  position:relative;border-bottom:1px solid var(--gray-200);
+  height:140px;position:relative;overflow:hidden;
+  background:var(--gray-100) center/cover no-repeat;
+  border-bottom:1px solid var(--gray-200);
 }
-/* Neutralized color variants — all machines share the same clean look */
-.machine-img.blue,
-.machine-img.teal,
-.machine-img.purple,
-.machine-img.orange,
-.machine-img.green{background:var(--gray-100);color:var(--black);}
+.machine-img::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.25) 100%);
+}
+.machine-img .machine-type-chip{
+  position:absolute;top:10px;left:10px;z-index:1;
+  background:rgba(10,10,10,0.8);color:#fff;backdrop-filter:blur(4px);
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;
+  padding:4px 8px;border-radius:var(--radius-sm);
+}
+/* Machine photos by area — industrial photography from Unsplash */
+.machine-img.blue   {background-image:url('https://images.unsplash.com/photo-1553708881-112abc53fe54?w=600&q=60&auto=format');}  /* bagging line */
+.machine-img.teal   {background-image:url('https://images.unsplash.com/photo-1613274944851-dddc5e8eeb7b?w=600&q=60&auto=format');}  /* mixer */
+.machine-img.purple {background-image:url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=60&auto=format');}  /* extruder / machinery */
+.machine-img.orange {background-image:url('https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=600&q=60&auto=format');}  /* finishing */
+.machine-img.green  {background-image:url('https://images.unsplash.com/photo-1566733971017-13cf22b3e3b1?w=600&q=60&auto=format');}  /* packaging / labeler */
 .machine-body{padding:14px 16px;}
 .machine-name{font-weight:600;font-size:14px;color:var(--gray-900);margin-bottom:2px;}
 .machine-area{font-size:12px;color:var(--gray-500);}
@@ -466,25 +516,40 @@ a{color:inherit;text-decoration:none;}
 .chip:hover{border-color:var(--black);color:var(--black);}
 .chip.active{background:var(--black);color:#fff;border-color:var(--black);}
 
-/* KPI row */
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
+/* KPI row — filled pill cards */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
 .kpi{
   background:#fff;border:1px solid var(--gray-200);
-  border-radius:var(--radius-md);padding:16px;
+  border-radius:var(--radius-md);padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  transition:border-color .15s, transform .15s;
 }
-.kpi .l{font-size:11.5px;color:var(--gray-500);text-transform:uppercase;font-weight:600;letter-spacing:0.4px;}
-.kpi .n{font-size:24px;font-weight:700;color:var(--gray-900);margin-top:4px;}
-.kpi .d{font-size:12px;color:var(--green-600);margin-top:2px;font-weight:500;}
+.kpi:hover{border-color:var(--black);}
+.kpi .kpi-ico{
+  width:40px;height:40px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+  background:var(--gray-100);color:var(--black);
+}
+.kpi.filled-black .kpi-ico{background:var(--black);color:#fff;}
+.kpi.filled-red .kpi-ico{background:var(--red);color:#fff;}
+.kpi .kpi-text{min-width:0;flex:1;}
+.kpi .l{font-size:10.5px;color:var(--gray-500);text-transform:uppercase;font-weight:600;letter-spacing:0.4px;}
+.kpi .n{font-size:22px;font-weight:700;color:var(--black);margin-top:2px;line-height:1;letter-spacing:-0.3px;}
+.kpi .d{font-size:11px;color:var(--gray-500);margin-top:3px;font-weight:500;}
 
 /* Tabs */
-.tabs{display:flex;gap:2px;border-bottom:1px solid var(--gray-200);margin-bottom:18px;}
+.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
 .tab{
-  padding:10px 16px;font-size:13px;color:var(--gray-500);font-weight:500;
-  border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;
-  transition:color .15s, border-color .15s;
+  padding:8px 16px;font-size:12.5px;color:var(--gray-600);font-weight:600;
+  cursor:pointer;border-radius:var(--radius-sm);
+  background:#fff;border:1px solid var(--gray-200);
+  display:inline-flex;align-items:center;gap:6px;
+  transition:all .15s;
 }
-.tab:hover{color:var(--black);}
-.tab.active{color:var(--black);border-bottom-color:var(--red);}
+.tab:hover{border-color:var(--black);color:var(--black);}
+.tab.active{background:var(--black);color:#fff;border-color:var(--black);}
+.tab.active::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);}
 
 /* Breadcrumb */
 .crumbs{
@@ -1723,28 +1788,56 @@ function renderHome(){
 
     <div class="tile-grid">
       <div class="tile t1" onclick="show('plant')">
-        <div class="ico-wrap">&#9881;</div>
-        <div class="n">${userMachines.length}</div>
-        <div class="l">${t("kpi_machines")}</div>
-        <div class="meta">${userPlants().length} ${userPlants().length===1?"plant":"plants"}</div>
+        <div class="tile-content">
+          <div class="tile-top">
+            <div class="ico-wrap">&#9881;</div>
+            <div class="tile-arrow">&#10142;</div>
+          </div>
+          <div>
+            <div class="n">${userMachines.length}</div>
+            <div class="l">${t("kpi_machines")}</div>
+            <div class="meta">${userPlants().length} ${userPlants().length===1?"plant":"plants"}</div>
+          </div>
+        </div>
       </div>
       <div class="tile t2" onclick="show('library')">
-        <div class="ico-wrap">&#128737;</div>
-        <div class="n">${docs.filter(d=>d.category==="SOP"||d.category==="Safety").length}</div>
-        <div class="l">${t("kpi_sop")}</div>
-        <div class="meta">Required reading enforced</div>
+        <div class="tile-content">
+          <div class="tile-top">
+            <div class="ico-wrap">&#128737;</div>
+            <div class="tile-arrow">&#10142;</div>
+          </div>
+          <div>
+            <div class="n">${docs.filter(d=>d.category==="SOP"||d.category==="Safety").length}</div>
+            <div class="l">${t("kpi_sop")}</div>
+            <div class="meta">Required reading enforced</div>
+          </div>
+        </div>
       </div>
       <div class="tile t3" onclick="show('library')">
-        <div class="ico-wrap">&#128260;</div>
-        <div class="n">${recentRevisions.length}</div>
-        <div class="l">${t("kpi_recent")}</div>
-        <div class="meta">Revised in last 30 days</div>
+        <div class="tile-content">
+          <div class="tile-top">
+            <div class="ico-wrap">&#128260;</div>
+            <div class="tile-arrow">&#10142;</div>
+          </div>
+          <div>
+            <div class="n">${recentRevisions.length}</div>
+            <div class="l">${t("kpi_recent")}</div>
+            <div class="meta">Revised in last 30 days</div>
+          </div>
+        </div>
       </div>
       <div class="tile t4" onclick="show('library')">
-        <div class="ico-wrap">&#128196;</div>
-        <div class="n">${docs.length}</div>
-        <div class="l">${t("kpi_docs")}</div>
-        <div class="meta">${docs.filter(d=>d.status==="Approved").length} approved</div>
+        <div class="tile-content">
+          <div class="tile-top">
+            <div class="ico-wrap">&#128196;</div>
+            <div class="tile-arrow">&#10142;</div>
+          </div>
+          <div>
+            <div class="n">${docs.length}</div>
+            <div class="l">${t("kpi_docs")}</div>
+            <div class="meta">${docs.filter(d=>d.status==="Approved").length} approved</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1836,11 +1929,18 @@ function filterHomeDocs(q){
   const list = visibleDocs().filter(d=>d.title.toLowerCase().includes(q.toLowerCase())).slice(0,6);
   $("#homeDocList").innerHTML = renderDocRows(list);
 }
+// Map category -> file-type icon class (looks like PDF/DOCX/XLSX/PM tags)
+function docFileIcon(d){
+  const map = { SOP:"pdf", Safety:"pdf", Training:"docx", Quality:"xlsx", PM:"pm", Troubleshooting:"docx" };
+  const cls = map[d.category] || "pdf";
+  const label = cls.toUpperCase();
+  return `<div class="doc-ico ${cls}">${label}</div>`;
+}
 function renderDocRows(list){
   if(!list.length) return `<div class="empty"><div class="ico">&#128196;</div>No documents</div>`;
   return list.map(d=>`
     <div class="doc-row" onclick="openDoc('${d.id}')">
-      <div class="doc-ico">&#128196;</div>
+      ${docFileIcon(d)}
       <div class="doc-meta">
         <div class="doc-title">${d.title}</div>
         <div class="doc-sub">${plantName(d.plant)} &middot; ${machineName(d.machine)} &middot; ${d.revision}</div>
@@ -1869,11 +1969,26 @@ function renderPlant(){
     </div>
 
     <div class="kpi-row">
-      <div class="kpi"><div class="l">${t("machines")}</div><div class="n">${myMachines.length}</div><div class="d">Active equipment</div></div>
-      <div class="kpi"><div class="l">${t("sopCount")}</div><div class="n">${docs.filter(d=>d.category==="SOP").length}</div><div class="d">+2 this quarter</div></div>
-      <div class="kpi"><div class="l">${t("safetyCount")}</div><div class="n">${docs.filter(d=>d.category==="Safety").length}</div><div class="d">100% approved</div></div>
-      <div class="kpi"><div class="l">${t("pmCount")}</div><div class="n">${docs.filter(d=>d.category==="PM").length}</div><div class="d">Weekly PMs current</div></div>
-      <div class="kpi"><div class="l">${t("trainingCount")}</div><div class="n">${docs.filter(d=>d.trainingRequired).length}</div><div class="d">Assignments active</div></div>
+      <div class="kpi filled-black">
+        <div class="kpi-ico">&#127981;</div>
+        <div class="kpi-text"><div class="l">${t("machines")}</div><div class="n">${myMachines.length}</div><div class="d">Active equipment</div></div>
+      </div>
+      <div class="kpi filled-red">
+        <div class="kpi-ico">&#128220;</div>
+        <div class="kpi-text"><div class="l">${t("sopCount")}</div><div class="n">${docs.filter(d=>d.category==="SOP").length}</div><div class="d">+2 this quarter</div></div>
+      </div>
+      <div class="kpi filled-black">
+        <div class="kpi-ico">&#128737;</div>
+        <div class="kpi-text"><div class="l">${t("safetyCount")}</div><div class="n">${docs.filter(d=>d.category==="Safety").length}</div><div class="d">100% approved</div></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-ico">&#128295;</div>
+        <div class="kpi-text"><div class="l">${t("pmCount")}</div><div class="n">${docs.filter(d=>d.category==="PM").length}</div><div class="d">Weekly PMs current</div></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-ico">&#127891;</div>
+        <div class="kpi-text"><div class="l">${t("trainingCount")}</div><div class="n">${docs.filter(d=>d.trainingRequired).length}</div><div class="d">Assignments active</div></div>
+      </div>
     </div>
 
     <div class="card">
@@ -1885,7 +2000,9 @@ function renderPlant(){
         <div class="machine-grid">
           ${filtered.map(m=>`
             <div class="machine-card" onclick="openMachine('${m.id}')">
-              <div class="machine-img ${m.img}">${m.name.split(" ").map(w=>w[0]).slice(0,2).join("")}</div>
+              <div class="machine-img ${m.img}">
+                <span class="machine-type-chip">${m.area}</span>
+              </div>
               <div class="machine-body">
                 <div class="machine-name">${m.name}</div>
                 <div class="machine-area">${plantName(m.plant)} &middot; ${m.area}</div>
@@ -1924,7 +2041,7 @@ function renderMachine(){
     </div>
     <div class="card" style="margin-bottom:18px;">
       <div style="display:flex;align-items:center;gap:20px;padding:20px;">
-        <div class="machine-img ${m.img}" style="width:100px;height:100px;border-radius:12px;font-size:22px;">${m.name.split(" ").map(w=>w[0]).slice(0,2).join("")}</div>
+        <div class="machine-img ${m.img}" style="width:120px;height:120px;border-radius:var(--radius-md);flex-shrink:0;border:1px solid var(--gray-200);"></div>
         <div style="flex:1;">
           <div class="page-title">${m.name}</div>
           <div class="page-sub">${plantName(m.plant)} &middot; ${m.area} &middot; ${docs.length} documents</div>
