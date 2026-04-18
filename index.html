@@ -2842,16 +2842,27 @@ function hideAuthMessages(){
   document.getElementById("authSuccess").style.display = "none";
 }
 
+const PROD_APP_URL = "https://machine-document-portal.vercel.app";
+function authRedirectUrl(){
+  // Always redirect magic links to the production app unless we're already on it,
+  // so clicking a link from a local preview or a stale tab still lands somewhere real.
+  const here = window.location.origin;
+  if(here.startsWith("http://localhost") || here.startsWith("http://127.") || here.startsWith("file://")){
+    return PROD_APP_URL;
+  }
+  return here + window.location.pathname;
+}
+
 async function doMagicLink(){
   const email = document.getElementById("magicEmail").value.trim();
   if(!email){ showAuthError("Enter your email address"); return; }
   if(!sb){ showAuthError("Backend not configured"); return; }
   try{
     const { error } = await sb.auth.signInWithOtp({
-      email, options:{ emailRedirectTo: window.location.href }
+      email, options:{ emailRedirectTo: authRedirectUrl() }
     });
     if(error) throw error;
-    showAuthSuccess(`<strong>Check your email.</strong><br/>We sent a sign-in link to <strong>${email}</strong>. Click it to continue.`);
+    showAuthSuccess(`<strong>Check your email.</strong><br/>We sent a sign-in link to <strong>${email}</strong>.<br/><span style="font-size:11px;color:#166534;">The link will take you to <code>${authRedirectUrl()}</code></span>`);
   }catch(e){ showAuthError(e.message||"Failed to send magic link"); }
 }
 
