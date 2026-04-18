@@ -287,20 +287,40 @@ a{color:inherit;text-decoration:none;}
 /* Welcome banner */
 .welcome-banner{
   position:relative;overflow:hidden;
-  background:
-    linear-gradient(90deg, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.72) 50%, rgba(10,10,10,0.4) 100%),
-    url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=70&auto=format') center/cover no-repeat,
-    var(--black);
+  background:var(--black);
   color:#fff;
   border-radius:var(--radius-md);
   padding:32px 36px;
   margin-bottom:22px;
-  min-height:160px;
+  min-height:180px;
   display:flex;align-items:center;justify-content:space-between;gap:24px;
 }
-.welcome-banner::after{
-  content:"";position:absolute;top:0;bottom:0;left:0;width:3px;background:var(--red);
+.welcome-banner .hero-slide{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  opacity:0;transition:opacity 1.4s ease-in-out;
+  z-index:0;
 }
+.welcome-banner .hero-slide.active{opacity:1;}
+.welcome-banner .hero-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.72) 55%, rgba(10,10,10,0.35) 100%);
+}
+.welcome-banner > *:not(.hero-slide):not(.hero-overlay){position:relative;z-index:2;}
+.welcome-banner::after{
+  content:"";position:absolute;top:0;bottom:0;left:0;width:3px;background:var(--red);z-index:3;
+}
+.hero-dots{
+  position:absolute;bottom:12px;left:36px;z-index:3;
+  display:flex;gap:6px;
+}
+.hero-dot{
+  width:18px;height:3px;border-radius:2px;
+  background:rgba(255,255,255,0.3);cursor:pointer;
+  transition:background .2s;
+}
+.hero-dot.active{background:var(--red);}
+.hero-dot:hover{background:rgba(255,255,255,0.6);}
 .welcome-banner h2{font-size:26px;font-weight:700;margin-bottom:6px;color:#fff;letter-spacing:-0.3px;}
 .welcome-banner p{color:rgba(255,255,255,0.75);font-size:13px;max-width:640px;}
 .welcome-banner .badge-role{
@@ -1760,6 +1780,46 @@ function updateUserChip(){
 }
 
 /* =========================================================
+   HERO SLIDESHOW (box manufacturing imagery)
+========================================================= */
+const heroImages = [
+  "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=70&auto=format", // stacked cardboard boxes
+  "https://images.unsplash.com/photo-1609542094671-8fd04bc40611?w=1600&q=70&auto=format", // cardboard production close-up
+  "https://images.unsplash.com/photo-1601598851547-4302969d0614?w=1600&q=70&auto=format", // warehouse boxes
+  "https://images.unsplash.com/photo-1553413077-190dd305871c?w=1600&q=70&auto=format",    // cardboard stacks
+  "https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=1600&q=70&auto=format", // packaging on pallets
+  "https://images.unsplash.com/photo-1566843972142-a7fcb70de55a?w=1600&q=70&auto=format"  // brown kraft boxes
+];
+let heroIdx = 0;
+let heroTimer = null;
+
+function goToHeroSlide(i){
+  const slides = document.querySelectorAll(".hero-slide");
+  const dots   = document.querySelectorAll(".hero-dot");
+  if(!slides.length) return;
+  heroIdx = (i + slides.length) % slides.length;
+  slides.forEach((s,idx)=>s.classList.toggle("active", idx===heroIdx));
+  dots.forEach((d,idx)=>d.classList.toggle("active", idx===heroIdx));
+  // Reset autoplay timer so manual nav feels responsive
+  startHeroSlideshow();
+}
+function startHeroSlideshow(){
+  if(heroTimer){ clearInterval(heroTimer); }
+  heroTimer = setInterval(()=>{
+    const slides = document.querySelectorAll(".hero-slide");
+    if(!slides.length){ clearInterval(heroTimer); heroTimer=null; return; }
+    goToHeroSlideSilent((heroIdx+1) % slides.length);
+  }, 6000);
+}
+function goToHeroSlideSilent(i){
+  const slides = document.querySelectorAll(".hero-slide");
+  const dots   = document.querySelectorAll(".hero-dot");
+  heroIdx = i;
+  slides.forEach((s,idx)=>s.classList.toggle("active", idx===heroIdx));
+  dots.forEach((d,idx)=>d.classList.toggle("active", idx===heroIdx));
+}
+
+/* =========================================================
    VIEW: HOME DASHBOARD
 ========================================================= */
 function renderHome(){
@@ -1774,7 +1834,9 @@ function renderHome(){
   const recentRevisions = [...docs].filter(d=>parseInt(d.revision.replace(/\D/g,""))>=2).slice(0,5);
 
   $("#homeView").innerHTML = `
-    <div class="welcome-banner">
+    <div class="welcome-banner" id="welcomeBanner">
+      ${heroImages.map((src,i)=>`<div class="hero-slide ${i===0?'active':''}" data-slide="${i}" style="background-image:url('${src}');"></div>`).join("")}
+      <div class="hero-overlay"></div>
       <div>
         <h2>${t("welcome")}, ${currentUser.name.split(" ")[0]}</h2>
         <p>${t("welcomeSub")} <strong>${pName}</strong> &middot; ${roles[currentUser.role].label}</p>
@@ -1783,6 +1845,9 @@ function renderHome(){
         <div class="welcome-stat"><div class="n">${userMachines.length}</div><div class="l">${t("kpi_machines")}</div></div>
         <div class="welcome-stat"><div class="n">${docs.length}</div><div class="l">${t("kpi_docs")}</div></div>
         <div class="welcome-stat"><div class="n">${docs.filter(d=>d.status==="Draft").length}</div><div class="l">Drafts</div></div>
+      </div>
+      <div class="hero-dots">
+        ${heroImages.map((_,i)=>`<div class="hero-dot ${i===0?'active':''}" data-dot="${i}" onclick="goToHeroSlide(${i})"></div>`).join("")}
       </div>
     </div>
 
@@ -1924,6 +1989,8 @@ function renderHome(){
       </div>
     </div>
   `;
+  // Start rotating hero imagery after the DOM has painted
+  startHeroSlideshow();
 }
 function filterHomeDocs(q){
   const list = visibleDocs().filter(d=>d.title.toLowerCase().includes(q.toLowerCase())).slice(0,6);
