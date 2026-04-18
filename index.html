@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Machine Document Control Portal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 /* =========================================================
    DESIGN TOKENS
@@ -658,6 +659,83 @@ a{color:inherit;text-decoration:none;}
 .sparkline path{fill:none;stroke:var(--blue-500);stroke-width:2;}
 .sparkline .area{fill:rgba(37,99,235,0.12);stroke:none;}
 .sparkline .dot{fill:var(--blue-500);}
+
+/* Notifications dropdown */
+.notif-btn{position:relative;}
+.notif-badge{
+  position:absolute;top:3px;right:3px;
+  background:var(--red-600);color:#fff;
+  font-size:9px;font-weight:700;
+  width:15px;height:15px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--navy-900);
+}
+.notif-panel{
+  position:absolute;top:56px;right:80px;
+  background:#fff;color:var(--gray-800);
+  width:380px;max-height:500px;
+  border-radius:var(--radius-md);box-shadow:var(--shadow-lg);
+  border:1px solid var(--gray-200);
+  z-index:100;display:none;overflow:hidden;flex-direction:column;
+}
+.notif-panel.open{display:flex;}
+.notif-head{
+  padding:12px 16px;border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--gray-50);
+}
+.notif-head h4{font-size:13px;font-weight:600;color:var(--gray-900);}
+.notif-head a{font-size:11px;color:var(--blue-500);cursor:pointer;}
+.notif-list{flex:1;overflow:auto;}
+.notif-item{
+  padding:12px 16px;border-bottom:1px solid var(--gray-100);
+  cursor:pointer;display:flex;gap:10px;
+  transition:background .15s;
+}
+.notif-item:hover{background:var(--blue-50);}
+.notif-item.unread{background:#eff6ff;}
+.notif-item:last-child{border-bottom:none;}
+.notif-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--blue-500);
+  flex-shrink:0;margin-top:6px;
+}
+.notif-item:not(.unread) .notif-dot{background:var(--gray-300);}
+.notif-body{flex:1;}
+.notif-title{font-size:12.5px;font-weight:600;color:var(--gray-900);margin-bottom:2px;}
+.notif-msg{font-size:11.5px;color:var(--gray-600);line-height:1.45;}
+.notif-time{font-size:10.5px;color:var(--gray-400);margin-top:3px;}
+
+/* Supabase status indicator */
+.supa-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 8px;border-radius:999px;
+  background:rgba(22,163,74,0.15);color:#86efac;
+  font-size:10.5px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.3px;
+}
+.supa-chip .dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+.supa-chip.offline{background:rgba(148,163,184,0.2);color:#cbd5e1;}
+.supa-chip.offline .dot{background:#94a3b8;animation:none;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* Magic link auth card */
+.auth-tabs{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--gray-200);}
+.auth-tab{
+  padding:8px 14px;font-size:13px;color:var(--gray-500);font-weight:500;
+  border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;
+  transition:color .15s,border-color .15s;
+}
+.auth-tab.active{color:var(--blue-500);border-bottom-color:var(--blue-500);}
+.auth-success{
+  background:#dcfce7;border:1px solid #86efac;color:#166534;
+  padding:14px;border-radius:var(--radius-md);
+  font-size:13px;margin-bottom:16px;
+}
+.auth-error{
+  background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;
+  padding:10px 14px;border-radius:var(--radius-md);
+  font-size:12px;margin-bottom:12px;
+}
 .pdf-page{
   background:#fff;color:#111827;
   width:640px;min-height:820px;
@@ -911,21 +989,45 @@ a{color:inherit;text-decoration:none;}
     <div class="login-card">
       <h2 data-i18n="signIn">Sign in to your account</h2>
       <p class="muted" data-i18n="signInSub">Use your enterprise credentials to continue</p>
-      <div class="form-group">
-        <label data-i18n="emailLabel">Email or Username</label>
-        <input type="text" class="form-control" id="loginUser" placeholder="you@company.com" value="john.m@supplyone.com" />
+
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabMagic" onclick="switchAuthTab('magic')">Magic Link</div>
+        <div class="auth-tab" id="tabPass" onclick="switchAuthTab('pass')">Password</div>
+        <div class="auth-tab" id="tabDemo" onclick="switchAuthTab('demo')">Demo Users</div>
       </div>
-      <div class="form-group">
-        <label data-i18n="passLabel">Password</label>
-        <input type="password" class="form-control" id="loginPass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" value="demo" />
+
+      <div id="authError" class="auth-error" style="display:none;"></div>
+      <div id="authSuccess" class="auth-success" style="display:none;"></div>
+
+      <div id="authPaneMagic">
+        <div class="form-group">
+          <label>Work email</label>
+          <input type="email" class="form-control" id="magicEmail" placeholder="you@company.com" />
+        </div>
+        <button class="btn-primary" onclick="doMagicLink()">Send magic link &#10142;</button>
+        <div class="divider">Sign in without a password &mdash; we email you a one-click link</div>
       </div>
-      <div class="row-between">
-        <label class="checkbox"><input type="checkbox" checked /> <span data-i18n="remember">Remember me on this device</span></label>
-        <a class="link-text" data-i18n="forgot">Forgot password?</a>
+
+      <div id="authPanePass" style="display:none;">
+        <div class="form-group">
+          <label data-i18n="emailLabel">Email</label>
+          <input type="email" class="form-control" id="loginUser" placeholder="you@company.com" />
+        </div>
+        <div class="form-group">
+          <label data-i18n="passLabel">Password</label>
+          <input type="password" class="form-control" id="loginPass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+        </div>
+        <div class="row-between">
+          <label class="checkbox"><input type="checkbox" checked /> <span data-i18n="remember">Remember me on this device</span></label>
+          <a class="link-text" data-i18n="forgot">Forgot password?</a>
+        </div>
+        <button class="btn-primary" onclick="doPasswordLogin()" data-i18n="signInBtn">Sign in securely</button>
       </div>
-      <button class="btn-primary" onclick="doLogin()" data-i18n="signInBtn">Sign in securely</button>
-      <div class="divider" data-i18n="orDemo">Or continue as demo user</div>
-      <div class="demo-grid" id="demoUserGrid"></div>
+
+      <div id="authPaneDemo" style="display:none;">
+        <p class="muted" style="margin-bottom:14px;font-size:12px;">Quick-sign-in as any demo user to explore role-based access. No real authentication required.</p>
+        <div class="demo-grid" id="demoUserGrid"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -967,7 +1069,8 @@ a{color:inherit;text-decoration:none;}
         <button id="langEn" class="active" onclick="setLang('en')">EN</button>
         <button id="langEs" onclick="setLang('es')">ES</button>
       </div>
-      <button class="topnav-icon" title="Notifications">&#128276;</button>
+      <span class="supa-chip offline" id="supaChip" title="Backend connection status"><span class="dot"></span><span id="supaChipText">Demo</span></span>
+      <button class="topnav-icon notif-btn" title="Notifications" onclick="toggleNotifPanel(event)">&#128276;<span class="notif-badge" id="notifBadge" style="display:none;">0</span></button>
       <div class="user-chip" onclick="toggleUserMenu(event)">
         <div class="avatar" id="userAvatar">J</div>
         <div class="info">
@@ -976,6 +1079,14 @@ a{color:inherit;text-decoration:none;}
         </div>
       </div>
     </div>
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-head">
+        <h4>Notifications</h4>
+        <a onclick="markAllNotifRead()">Mark all read</a>
+      </div>
+      <div class="notif-list" id="notifList"></div>
+    </div>
+
     <div class="user-menu" id="userMenu">
       <div class="user-menu-head">
         <div class="t" data-i18n="switchUser">Switch demo user</div>
@@ -2687,9 +2798,393 @@ function renderAnalytics(){
 }
 
 /* =========================================================
+   SUPABASE INTEGRATION
+   The app runs in two modes:
+     - DEMO: uses in-memory mock data (no session)
+     - CONNECTED: real DB reads/writes when a Supabase session exists
+   Writes gracefully degrade to local state when not authenticated.
+========================================================= */
+const SUPABASE_URL = "https://nzfutfdbeltxbxghnaxt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_yf2C_x3FJ7e14WRwF9AUtA_Rx7puRL-";
+let sb = null;
+let supaSession = null;
+let supaProfile = null;
+let notifications = [];
+let notifChannel = null;
+let authTab = "magic";
+
+if(window.supabase && SUPABASE_URL && SUPABASE_KEY){
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+  });
+}
+
+function switchAuthTab(tab){
+  authTab = tab;
+  ["magic","pass","demo"].forEach(k=>{
+    document.getElementById("tab"+k.charAt(0).toUpperCase()+k.slice(1)).classList.toggle("active", k===tab);
+    document.getElementById("authPane"+k.charAt(0).toUpperCase()+k.slice(1)).style.display = (k===tab)?"block":"none";
+  });
+  hideAuthMessages();
+}
+function showAuthError(msg){
+  const e = document.getElementById("authError");
+  e.textContent = msg; e.style.display = "block";
+  document.getElementById("authSuccess").style.display = "none";
+}
+function showAuthSuccess(msg){
+  const e = document.getElementById("authSuccess");
+  e.innerHTML = msg; e.style.display = "block";
+  document.getElementById("authError").style.display = "none";
+}
+function hideAuthMessages(){
+  document.getElementById("authError").style.display = "none";
+  document.getElementById("authSuccess").style.display = "none";
+}
+
+async function doMagicLink(){
+  const email = document.getElementById("magicEmail").value.trim();
+  if(!email){ showAuthError("Enter your email address"); return; }
+  if(!sb){ showAuthError("Backend not configured"); return; }
+  try{
+    const { error } = await sb.auth.signInWithOtp({
+      email, options:{ emailRedirectTo: window.location.href }
+    });
+    if(error) throw error;
+    showAuthSuccess(`<strong>Check your email.</strong><br/>We sent a sign-in link to <strong>${email}</strong>. Click it to continue.`);
+  }catch(e){ showAuthError(e.message||"Failed to send magic link"); }
+}
+
+async function doPasswordLogin(){
+  const email = document.getElementById("loginUser").value.trim();
+  const pass  = document.getElementById("loginPass").value;
+  if(!email || !pass){ showAuthError("Enter email and password"); return; }
+  if(!sb){ showAuthError("Backend not configured"); return; }
+  try{
+    const { data, error } = await sb.auth.signInWithPassword({ email, password:pass });
+    if(error) throw error;
+    await onSupabaseSession(data.session);
+  }catch(e){ showAuthError(e.message||"Sign-in failed"); }
+}
+
+function setSupaChip(connected, label){
+  const chip = document.getElementById("supaChip");
+  const text = document.getElementById("supaChipText");
+  if(!chip) return;
+  chip.classList.toggle("offline", !connected);
+  text.textContent = label || (connected?"Live":"Demo");
+}
+
+async function onSupabaseSession(session){
+  if(!session) return;
+  supaSession = session;
+  const { data:profile } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+  if(profile){
+    supaProfile = profile;
+    const { data:access } = await sb.from("user_plant_access").select("plant_id").eq("user_id", session.user.id);
+    const userPlants = profile.role==="corp_admin" ? (await sb.from("plants").select("id")).data.map(p=>p.id) : (access||[]).map(a=>a.plant_id);
+    // Build in-memory currentUser from real profile
+    currentUser = {
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      role: profile.role,
+      plants: userPlants,
+      initials: profile.initials || profile.name.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase()
+    };
+    // Add to users array so user switcher shows it
+    if(!users.find(u=>u.id===currentUser.id)){ users.unshift(currentUser); }
+  }
+
+  await loadFromSupabase();
+  setSupaChip(true, "Live");
+
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("appShell").style.display = "flex";
+  buildNav(); renderUserMenu(); updateUserChip();
+  show("home");
+
+  // Start realtime notifications
+  subscribeNotifications();
+  // Log audit in DB
+  logAudit("login","system",null,"Session","Signed in via Supabase","green");
+}
+
+async function loadFromSupabase(){
+  if(!sb) return;
+  try{
+    const [plantsRes, machRes, docsRes] = await Promise.all([
+      sb.from("plants").select("*"),
+      sb.from("machines").select("*"),
+      sb.from("documents").select("*")
+    ]);
+    if(plantsRes.data && plantsRes.data.length){
+      plants.length = 0;
+      plantsRes.data.forEach(p=>plants.push({
+        id:p.id, code:p.code, name:p.name, region:p.region, address:p.address
+      }));
+    }
+    if(machRes.data && machRes.data.length){
+      machines.length = 0;
+      machRes.data.forEach(m=>machines.push({
+        id:m.id, plant:m.plant_id, name:m.name, area:m.area, img:m.img_variant||"blue"
+      }));
+    }
+    if(docsRes.data && docsRes.data.length){
+      documents.length = 0;
+      docsRes.data.forEach(d=>documents.push({
+        id:d.id, plant:d.plant_id, machine:d.machine_id,
+        title:d.title, category:d.category,
+        revision:d.current_revision, revState:d.rev_state,
+        status:d.status, language:d.language,
+        effective:d.effective_date, reviewDue:d.review_due_date,
+        owner:d.owner, approver:d.approver,
+        readRequired:d.read_required, trainingRequired:d.training_required,
+        pdfUrl: d.pdf_storage_path ? null : SAMPLE_PDF_URL, // signed URL fetched on open
+        pdfStoragePath: d.pdf_storage_path,
+        body:d.body||"", views:d.view_count||0,
+        revisions:[{ rev:d.current_revision, status:d.status, date:d.effective_date, author:d.owner, state:d.rev_state }]
+      }));
+    }
+    // Load user-specific state
+    const uid = supaSession.user.id;
+    const [favRes, ackRes, recentRes] = await Promise.all([
+      sb.from("favorites").select("*").eq("user_id", uid),
+      sb.from("acknowledgments").select("*").eq("user_id", uid),
+      sb.from("recently_viewed").select("*").eq("user_id", uid).order("viewed_at",{ascending:false}).limit(10)
+    ]);
+    const s = userState[currentUser.id] = userState[currentUser.id] || { favMachines:[], favDocs:[], recent:[], acks:[], training:[] };
+    s.favMachines = (favRes.data||[]).filter(f=>f.target_type==="machine").map(f=>f.target_id);
+    s.favDocs = (favRes.data||[]).filter(f=>f.target_type==="document").map(f=>f.target_id);
+    s.acks = (ackRes.data||[]).map(a=>({ docId:a.document_id, title:"", ts:a.acknowledged_at }));
+    s.recent = (recentRes.data||[]).map(r=>({ id:r.document_id, ts:r.viewed_at }));
+  }catch(e){ console.error("Supabase load error:", e); }
+}
+
+/* ---------- Write-through adapters ---------- */
+async function supaLogAudit(event){
+  if(!sb || !supaSession) return;
+  try{
+    await sb.from("audit_events").insert({
+      user_id: supaSession.user.id,
+      user_name: currentUser.name,
+      plant_id: (event.plant && event.plant!=="all" && event.plant!=="multi") ? event.plant : null,
+      action: event.action, object_type: event.objType,
+      object_id: event.objId, object_name: event.objName,
+      details: event.details, severity: event.sev
+    });
+  }catch(e){ /* silent */ }
+}
+
+async function supaToggleFavorite(type, targetId, added){
+  if(!sb || !supaSession) return;
+  try{
+    if(added){
+      await sb.from("favorites").insert({ user_id:supaSession.user.id, target_type:type, target_id:targetId });
+    } else {
+      await sb.from("favorites").delete()
+        .eq("user_id", supaSession.user.id).eq("target_type", type).eq("target_id", targetId);
+    }
+  }catch(e){}
+}
+
+async function supaAddRecent(docId){
+  if(!sb || !supaSession) return;
+  try{
+    await sb.from("recently_viewed").insert({ user_id:supaSession.user.id, document_id:docId });
+  }catch(e){}
+}
+
+async function supaAck(docId, revision){
+  if(!sb || !supaSession) return;
+  try{
+    await sb.from("acknowledgments").insert({
+      user_id:supaSession.user.id, document_id:docId, revision:revision
+    });
+  }catch(e){}
+}
+
+/* Wrap existing functions so they also sync to Supabase */
+const _origLogAudit = logAudit;
+window.logAudit = function(action,objType,objId,objName,details,sev){
+  _origLogAudit(action,objType,objId,objName,details,sev);
+  const evt = auditLog[0];
+  supaLogAudit(evt);
+};
+const _origToggleFavMachine = toggleFavoriteMachine;
+window.toggleFavoriteMachine = function(mId){
+  const was = userState[currentUser.id].favMachines.includes(mId);
+  _origToggleFavMachine(mId);
+  supaToggleFavorite("machine", mId, !was);
+};
+const _origToggleFavDoc = toggleFavoriteDoc;
+window.toggleFavoriteDoc = function(dId){
+  const was = userState[currentUser.id].favDocs.includes(dId);
+  _origToggleFavDoc(dId);
+  supaToggleFavorite("document", dId, !was);
+};
+const _origAddRecent = addRecent;
+window.addRecent = function(dId){
+  _origAddRecent(dId);
+  supaAddRecent(dId);
+};
+const _origDoAck = doAck;
+window.doAck = function(dId, title){
+  const check = document.getElementById("ackCheck");
+  if(check && check.checked){
+    const d = documents.find(x=>x.id===dId);
+    if(d) supaAck(dId, d.revision);
+  }
+  _origDoAck(dId, title);
+};
+
+/* ---------- Storage: signed PDF URLs ---------- */
+async function getSignedPdfUrl(doc){
+  if(!sb || !supaSession || !doc.pdfStoragePath) return null;
+  try{
+    const { data, error } = await sb.storage.from("documents").createSignedUrl(doc.pdfStoragePath, 3600);
+    if(error) throw error;
+    return data.signedUrl;
+  }catch(e){ return null; }
+}
+
+// Hook into renderViewer's PDF load to use signed URL when available
+const _origOpenDoc = openDoc;
+window.openDoc = async function(dId){
+  const d = documents.find(x=>x.id===dId);
+  if(d && supaSession && d.pdfStoragePath){
+    const signed = await getSignedPdfUrl(d);
+    if(signed) d.pdfUrl = signed;
+  }
+  _origOpenDoc(dId);
+};
+
+/* ---------- Realtime notifications ---------- */
+async function subscribeNotifications(){
+  if(!sb || !supaSession) return;
+  // Initial load
+  const { data } = await sb.from("notifications").select("*").eq("user_id", supaSession.user.id).order("created_at",{ascending:false}).limit(50);
+  notifications = data || [];
+  renderNotifications();
+
+  if(notifChannel){ sb.removeChannel(notifChannel); }
+  notifChannel = sb.channel("notif-"+supaSession.user.id)
+    .on("postgres_changes", {
+      event:"INSERT", schema:"public", table:"notifications",
+      filter:"user_id=eq."+supaSession.user.id
+    }, (payload)=>{
+      notifications.unshift(payload.new);
+      renderNotifications();
+    })
+    .subscribe();
+}
+
+function renderNotifications(){
+  const badge = document.getElementById("notifBadge");
+  const list  = document.getElementById("notifList");
+  const unread = notifications.filter(n=>!n.read).length;
+  if(badge){
+    badge.textContent = unread;
+    badge.style.display = unread>0 ? "flex" : "none";
+  }
+  if(list){
+    list.innerHTML = notifications.length
+      ? notifications.slice(0,20).map(n=>`
+          <div class="notif-item ${n.read?"":"unread"}" onclick="openNotif('${n.id}','${n.link||""}')">
+            <div class="notif-dot"></div>
+            <div class="notif-body">
+              <div class="notif-title">${n.title||""}</div>
+              <div class="notif-msg">${n.body||""}</div>
+              <div class="notif-time">${timeAgo(n.created_at)}</div>
+            </div>
+          </div>`).join("")
+      : `<div class="empty" style="padding:40px 20px;"><div class="ico">&#128276;</div>No notifications</div>`;
+  }
+}
+
+function toggleNotifPanel(e){
+  if(e) e.stopPropagation();
+  document.getElementById("notifPanel").classList.toggle("open");
+}
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".notif-btn") && !e.target.closest(".notif-panel")){
+    const p = document.getElementById("notifPanel"); if(p) p.classList.remove("open");
+  }
+});
+
+async function openNotif(nId, link){
+  const n = notifications.find(x=>x.id===nId);
+  if(n && !n.read){
+    n.read = true;
+    renderNotifications();
+    if(sb && supaSession){ await sb.from("notifications").update({read:true}).eq("id", nId); }
+  }
+  if(link && link.startsWith("/doc/")){
+    const dId = link.replace("/doc/","");
+    document.getElementById("notifPanel").classList.remove("open");
+    if(documents.find(d=>d.id===dId)) openDoc(dId);
+  }
+}
+
+async function markAllNotifRead(){
+  notifications.forEach(n=>n.read=true);
+  renderNotifications();
+  if(sb && supaSession){
+    await sb.from("notifications").update({read:true}).eq("user_id", supaSession.user.id).eq("read", false);
+  }
+}
+
+/* ---------- Admin upload with real file storage ---------- */
+async function adminUploadReal(fileInput, meta){
+  if(!sb || !supaSession) return { error:"Not authenticated" };
+  try{
+    const file = fileInput.files[0];
+    if(!file) return { error:"No file selected" };
+    const storagePath = `${meta.plant_id}/${meta.id}/${meta.current_revision.replace(" ","")}.pdf`;
+    const { error:upErr } = await sb.storage.from("documents").upload(storagePath, file, { upsert:true, contentType:"application/pdf" });
+    if(upErr) throw upErr;
+    const { error:insErr } = await sb.from("documents").upsert({ ...meta, pdf_storage_path: storagePath });
+    if(insErr) throw insErr;
+    await sb.from("document_revisions").insert({
+      document_id: meta.id, revision: meta.current_revision,
+      status: meta.status, state: meta.rev_state,
+      effective_date: meta.effective_date, pdf_storage_path: storagePath,
+      author: meta.owner, created_by: supaSession.user.id
+    });
+    await loadFromSupabase();
+    return { ok:true, path:storagePath };
+  }catch(e){ return { error:e.message }; }
+}
+
+/* ---------- Session restore on boot ---------- */
+async function initSupabaseSession(){
+  if(!sb){ setSupaChip(false, "Demo"); return; }
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session){ await onSupabaseSession(session); }
+  else{ setSupaChip(false, "Demo"); }
+  sb.auth.onAuthStateChange(async (event, session)=>{
+    if(event==="SIGNED_IN" && session){ await onSupabaseSession(session); }
+    if(event==="SIGNED_OUT"){
+      supaSession = null; supaProfile = null;
+      setSupaChip(false, "Demo");
+      if(notifChannel){ sb.removeChannel(notifChannel); notifChannel=null; }
+    }
+  });
+}
+
+/* Wrap logout to also sign out of Supabase */
+const _origLogout = logout;
+window.logout = async function(){
+  if(sb && supaSession){ try{ await sb.auth.signOut(); }catch(e){} }
+  supaSession = null; supaProfile = null; setSupaChip(false,"Demo");
+  _origLogout();
+};
+
+/* =========================================================
    INIT
 ========================================================= */
 renderDemoUsers();
+initSupabaseSession();
 </script>
 </body>
 </html>
